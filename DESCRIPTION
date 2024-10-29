@@ -13,7 +13,8 @@ SystemRequirements: Python (>= 2.7.0)
 Suggests: 
     tinytest
 Depends:
-    reticulate (>= 1.14)
+    reticulate (>= 1.14),
+    R (>=2.10)
 Config/reticulate:
   list(
     packages = list(
@@ -21,4 +22,4 @@ Config/reticulate:
       list(package = "matplotlib", pip = TRUE)
     )
   )    
-RoxygenNote: 7.1.0
+
