@@ -1,7 +1,7 @@
 Package: rEpiabm
 Type: Package
 Title: R-wrapper of Epiabm
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: c(
     person('Anita', 'Applegarth', role = c('aut', 'cre', 'cph'), email = 'anita.applegarth@ox.ac.uk'), 
     person('Kingley', 'Oguma', role = 'aut', email = "kemukperuo@gmail.com"))
@@ -14,7 +14,7 @@ Suggests:
     tinytest
 Depends:
     reticulate (>= 1.14),
-    R (>=2.10)
+    R (>= 3.3.0)
 Config/reticulate:
   list(
     packages = list(
