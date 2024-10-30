@@ -4,6 +4,7 @@
 # Import dependencies
 
 library(reticulate)
+library(here)
 
 os <- import("os")
 logging <- import("logging")
@@ -12,10 +13,11 @@ plt <- import("matplotlib.pyplot")
 pe <- import("pyEpiabm")
 
 # Set working directory for relative directory references
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+base_dir <- here()
 
 # Set config file for Parameters
-pe$Parameters$set_file("data/simple_parameters.json")
+pe$Parameters$set_file(here("data", "simple_parameters.json"))
 
 # Method to set the seed at the start of the simulation, for reproducibility
 pe$routine$Simulation$set_random_seed(seed=as.integer(42))
@@ -41,27 +43,24 @@ sim_params <- list(
   include_waning = TRUE
 )
 
-# Create base directory for outputs
-base_dir <- getwd()  # gets current working directory
-
 # file_params
 file_params <- list(
   output_file = "output.csv",
-  output_dir = file.path(base_dir, "simulation_outputs"),
+  output_dir = here("simulation_outputs"),
   spatial_output = FALSE,
   age_stratified = FALSE
 )
 
 # dem_file_params
 dem_file_params <- list(
-  output_dir = file.path(base_dir, "simulation_outputs"),
+  output_dir = here("simulation_outputs"),
   spatial_output = FALSE,
   age_output = FALSE
 )
 
 # inf_history_params
 inf_history_params <- list(
-  output_dir = file.path(base_dir, "simulation_outputs"),
+  output_dir = here("simulation_outputs"),
   status_output = TRUE,
   infectiousness_output = TRUE,
   compress = FALSE  # Set to TRUE if compression desired
@@ -92,7 +91,7 @@ sim$run_sweeps()
 sim$compress_csv()
 
 # Create dataframe for plots
-filename <- file.path(base_dir, "simulation_outputs", "output.csv")
+filename <- here("simulation_outputs", "output.csv")
 df <- pd$read_csv(filename)
 
 # Convert pandas dataframe to R dataframe
@@ -135,7 +134,7 @@ print(p)
 
 # Save the plot
 ggsave(
-  filename = file.path(base_dir, "simulation_outputs", "simulation_flow_SIR_plot.png"),
+  filename = here("simulation_outputs", "simulation_flow_SIR_plot.png"),
   plot = p,
   width = 10,
   height = 6,
