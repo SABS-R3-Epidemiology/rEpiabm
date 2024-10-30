@@ -3,7 +3,7 @@
 #
 
 library(reticulate)
-use_virtualenv("../../repiabm_env")
+#use_virtualenv("../../repiabm_env")
 
 os <- import("os")
 logging <- import("logging")
