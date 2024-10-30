@@ -1,6 +1,6 @@
 Package: rEpiabm
 Type: Package
-Title: R-wrapper of Epiabm
+Title: R-Wrapper of Epiabm
 Version: 0.0.2
 Authors@R: c(
     person('Anita', 'Applegarth', role = c('aut', 'cre', 'cph'), email = 'anita.applegarth@reub.ox.ac.uk'),
@@ -12,7 +12,7 @@ Encoding: UTF-8
 Archs: x64
 SystemRequirements: Python (>= 2.7.0)
 Suggests: tinytest
-Imports: ggplot2
+Imports: ggplot2, here
 Depends: 
     reticulate (>= 1.14),
     R (>= 3.3.0)
@@ -20,6 +20,7 @@ Config/reticulate:
     list(
         packages = list(
             list(package = "numpy", pip = TRUE),
+	    list(package = "pandas", pip = TRUE),
             list(package = "matplotlib", pip = TRUE),
             list(
                 package = "pyEpiabm",
