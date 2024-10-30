@@ -11,7 +11,7 @@ pd <- import("pandas")
 plt <- import("matplotlib.pyplot")
 
 pe <- import("pyEpiabm")
-
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 # Set config file for Parameters
 pe$Parameters$set_file("data/simple_parameters.json")
 
