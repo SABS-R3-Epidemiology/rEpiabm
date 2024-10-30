@@ -14,6 +14,11 @@ SystemRequirements: Python (>= 2.7.0)
 Suggests: tinytest
 Imports: ggplot2
 Depends: 
+Suggests: 
+    tinytest
+Imports:
+    ggplot2
+Depends:
     reticulate (>= 1.14),
     R (>= 3.3.0)
 Config/reticulate:
