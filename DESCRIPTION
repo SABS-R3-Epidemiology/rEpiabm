@@ -3,10 +3,10 @@ Type: Package
 Title: R-wrapper of Epiabm
 Version: 0.0.2
 Authors@R: c(
-    person('Anita', 'Applegarth', role = c('aut', 'cre', 'cph'), email = 'anita.applegarth@ox.ac.uk'),
+    person('Anita', 'Applegarth', role = c('aut', 'cre', 'cph'), email = 'anita.applegarth@reub.ox.ac.uk'),
     person('Kingsley', 'Oguma', role = 'aut', email = "kemukperuo@gmail.com")
     )
-Description: Wraps the epiabm Python module. R users can...
+Description: Wraps the epiabm Python module in R.
 License: BSD_3_clause
 Encoding: UTF-8
 Archs: x64

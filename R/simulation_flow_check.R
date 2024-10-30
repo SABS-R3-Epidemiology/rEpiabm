@@ -1,17 +1,19 @@
 #
 # Example simulation script with data output
 #
+# Import dependencies
 
 library(reticulate)
-#use_virtualenv("../../repiabm_env")
 
 os <- import("os")
 logging <- import("logging")
 pd <- import("pandas")
 plt <- import("matplotlib.pyplot")
-
 pe <- import("pyEpiabm")
+
+# Set working directory for relative directory references
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
 # Set config file for Parameters
 pe$Parameters$set_file("data/simple_parameters.json")
 
