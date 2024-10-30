@@ -13,7 +13,6 @@ plt <- import("matplotlib.pyplot")
 pe <- import("pyEpiabm")
 
 # Set working directory for relative directory references
-# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 base_dir <- here()
 
 # Set config file for Parameters
