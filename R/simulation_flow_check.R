@@ -5,7 +5,7 @@
 
 
 library(reticulate)
-library(rEpiabm)
+#library(rEpiabm)
 library(here)
 
 os <- import("os", delay_load = TRUE)
