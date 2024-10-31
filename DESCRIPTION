@@ -20,7 +20,7 @@ Config/reticulate:
     list(
         packages = list(
             list(package = "numpy", pip = TRUE),
-	    list(package = "pandas", pip = TRUE),
+	          list(package = "pandas", pip = TRUE),
             list(package = "matplotlib", pip = TRUE),
             list(
                 package = "pyEpiabm",
@@ -29,3 +29,5 @@ Config/reticulate:
             )
         )
     )
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2

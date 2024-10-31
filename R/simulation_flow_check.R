@@ -4,6 +4,7 @@
 # Import dependencies
 
 library(reticulate)
+use_condaenv("rEpiabm")
 library(here)
 
 os <- import("os")
