@@ -4,14 +4,15 @@
 # Import dependencies
 
 library(reticulate)
-use_condaenv("rEpiabm")
+# replace the line below with your virtual python environment
+# use_condaenv("rEpiabm") 
 library(here)
 
-os <- import("os")
-logging <- import("logging")
-pd <- import("pandas")
-plt <- import("matplotlib.pyplot")
-pe <- import("pyEpiabm")
+os <- import("os", delay_load = TRUE)
+logging <- import("logging", delay_load = TRUE)
+pd <- import("pandas", delay_load = TRUE)
+plt <- import("matplotlib.pyplot", delay_load = TRUE)
+pe <- import("pyEpiabm", delay_load = TRUE)
 
 # Set working directory for relative directory references
 base_dir <- here()
