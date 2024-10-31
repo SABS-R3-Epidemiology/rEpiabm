@@ -3,9 +3,9 @@
 #
 # Import dependencies
 
+
 library(reticulate)
-# replace the line below with your virtual python environment
-# use_condaenv("rEpiabm") 
+library(rEpiabm)
 library(here)
 
 os <- import("os", delay_load = TRUE)
