@@ -1,48 +1,168 @@
-# In zzz.R
+# Environment setup and management functions for R package
 local <- new.env()
 
-.onLoad <- function(libname, pkgname) {
-  # Configure reticulate to use any available Python
-  reticulate::configure_environment(pkgname)
-  
-  # The required Python packages will be installed automatically based on 
-  # Config/reticulate in DESCRIPTION if they're not found
-  
-  # Import dependencies with error handling
+#' Create and configure Python environment
+#' @param env_name Character. Name of the virtual environment to create
+#' @param python_version Character. Python version to use (e.g., "3.8")
+#' @return Logical indicating success
+#' @keywords internal
+create_python_env <- function(env_name = "r-py-env", python_version = "3.8") {
   tryCatch({
-    os <- reticulate::import("os", delay_load = TRUE)
-    logging <- reticulate::import("logging", delay_load = TRUE)
-    pd <- reticulate::import("pandas", delay_load = TRUE)
-    plt <- reticulate::import("matplotlib.pyplot", delay_load = TRUE)
-    pe <- reticulate::import("pyEpiabm", delay_load = TRUE)
+    # Check if virtualenv package is available
+    if (!reticulate::virtualenv_exists(env_name)) {
+      message(sprintf("Creating new Python virtual environment: %s", env_name))
+      reticulate::virtualenv_create(
+        envname = env_name,
+        version = python_version,
+        packages = "pip"
+      )
+    }
     
-    # Assign to package environment
-    assign("os", os, envir = parent.env(local))
-    assign("logging", logging, envir = parent.env(local))
-    assign("pd", pd, envir = parent.env(local))
-    assign("plt", plt, envir = parent.env(local))
-    assign("pe", pe, envir = parent.env(local))
-    
+    # Activate the environment
+    reticulate::use_virtualenv(env_name, required = TRUE)
+    return(TRUE)
   }, error = function(e) {
-    warning(sprintf("Error loading Python dependencies: %s\nPlease ensure Python is installed and accessible.", e$message))
+    warning(sprintf("Failed to create/activate Python environment: %s", e$message))
+    return(FALSE)
   })
 }
 
-# Function to verify Python environment
+.onLoad <- function(libname, pkgname) {
+  # Create and activate Python environment
+  env_success <- create_python_env()
+  
+  if (!env_success) {
+    warning("Failed to set up Python environment. Some functionality may be limited.")
+    return()
+  }
+  
+  # Configure reticulate to use the package's environment
+  reticulate::configure_environment(pkgname)
+  
+  # Install required packages if not present
+  ensure_python_dependencies()
+  
+  # Import dependencies with error handling
+  tryCatch({
+    load_python_modules()
+  }, error = function(e) {
+    warning(sprintf("Error loading Python dependencies: %s\nPlease run check_python_env() to diagnose issues.", e$message))
+  })
+}
+
+#' Ensure all required Python dependencies are installed
+#' @keywords internal
+ensure_python_dependencies <- function() {
+  required_packages <- list(
+    list(package = "numpy", pip = TRUE),
+    list(package = "pandas", pip = TRUE),
+    list(package = "matplotlib", pip = TRUE),
+    list(package = "pyEpiabm", pip = TRUE,
+         pip_options = "--index-url git+https://github.com/SABS-R3-Epidemiology/epiabm.git@main#egg=pyEpiabm&subdirectory=pyEpiabm")
+  )
+  
+  # Check and install each package if needed
+  for (pkg_info in required_packages) {
+    pkg_name <- pkg_info$package
+    if (!reticulate::py_module_available(pkg_name)) {
+      message(sprintf("Installing required Python package: %s", pkg_name))
+      
+      tryCatch({
+        if (!is.null(pkg_info$pip_options)) {
+          reticulate::py_install(pkg_info$pip_options, pip = TRUE)
+        } else {
+          reticulate::py_install(pkg_name, pip = pkg_info$pip)
+        }
+      }, error = function(e) {
+        warning(sprintf("Failed to install %s: %s", pkg_name, e$message))
+      })
+    }
+  }
+}
+
+#' Load Python modules into package environment
+#' @keywords internal
+load_python_modules <- function() {
+  # Define modules to load
+  modules <- list(
+    os = "os",
+    logging = "logging",
+    pd = "pandas",
+    plt = "matplotlib.pyplot",
+    pe = "pyEpiabm"
+  )
+  
+  # Import each module
+  for (var_name in names(modules)) {
+    module_name <- modules[[var_name]]
+    tryCatch({
+      module <- reticulate::import(module_name, delay_load = TRUE)
+      assign(var_name, module, envir = parent.env(local))
+    }, error = function(e) {
+      warning(sprintf("Failed to load module %s: %s", module_name, e$message))
+    })
+  }
+}
+
+#' Check Python environment and package availability
 #' @export
 check_python_env <- function() {
-  python_path <- reticulate::py_config()$python
+  # Get Python configuration
+  python_config <- reticulate::py_config()
   
+  # Print Python information
   cat(sprintf("Python version: %s\n", reticulate::py_version()))
-  cat(sprintf("Python path: %s\n", python_path))
+  cat(sprintf("Python path: %s\n", python_config$python))
+  cat(sprintf("virtualenv: %s\n", if(is.null(python_config$virtualenv)) "None" else python_config$virtualenv))
   
-  required_packages <- c("os", "logging", "pandas", "matplotlib", "pyEpiabm")
+  # Check required packages
+  required_packages <- c("numpy", "pandas", "matplotlib", "pyEpiabm")
+  
+  cat("\nPackage Status:\n")
+  pkg_status <- list()
   
   for (pkg in required_packages) {
     if (reticulate::py_module_available(pkg)) {
-      cat(sprintf("✓ %s is available\n", pkg))
+      # Try to get version information
+      tryCatch({
+        version <- reticulate::py_eval(sprintf("__import__('%s').__version__", pkg))
+        cat(sprintf("✓ %s (version %s)\n", pkg, version))
+        pkg_status[[pkg]] <- TRUE
+      }, error = function(e) {
+        cat(sprintf("✓ %s (version unknown)\n", pkg))
+        pkg_status[[pkg]] <- TRUE
+      })
     } else {
       cat(sprintf("✗ %s is not available\n", pkg))
+      pkg_status[[pkg]] <- FALSE
     }
+  }
+  
+  # Return invisibly whether all packages are available
+  invisible(all(unlist(pkg_status)))
+}
+
+#' Initialize or repair Python environment
+#' @param force Logical. If TRUE, recreates the environment even if it exists
+#' @export
+initialize_python_env <- function(force = FALSE) {
+  env_name <- "r-py-env"
+  
+  if (force && reticulate::virtualenv_exists(env_name)) {
+    message("Removing existing Python environment...")
+    reticulate::virtualenv_remove(env_name)
+  }
+  
+  # Create and activate environment
+  if (create_python_env(env_name)) {
+    message("Python environment successfully created/activated")
+    
+    # Install dependencies
+    ensure_python_dependencies()
+    
+    # Check environment
+    check_python_env()
+  } else {
+    stop("Failed to initialize Python environment")
   }
 }

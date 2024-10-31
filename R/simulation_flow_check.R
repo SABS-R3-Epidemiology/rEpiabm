@@ -2,7 +2,9 @@
 # Example simulation script with data output
 #
 # Import dependencies
-
+source("R/zzz.R")
+initialize_python_env()
+check_python_env()
 
 library(reticulate)
 #library(rEpiabm)
