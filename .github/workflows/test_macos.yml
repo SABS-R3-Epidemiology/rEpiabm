@@ -28,6 +28,12 @@ jobs:
         with:
           r-version: ${{ matrix.R }}
           Ncpus: 2
+      
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
           
       - name: Query dependencies
         run: |
@@ -50,6 +56,24 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
+
+      - name: setup r-reticulate venv
+        shell: Rscript {0}
+        run: |
+
+          library(reticulate)
+
+          path_to_venv <- virtualenv_create(
+            envname = "r-reticulate",
+            python = Sys.which("python"), # placed on PATH by the setup-python action
+            packages = c(
+              "pandas", "matplotlib", "numpy"
+            )
+          )
+
+          writeLines(
+            paste0("RETICULATE_PYTHON=", virtualenv_python(path_to_venv)),
+            Sys.getenv("GITHUB_ENV"))
 
       - name: Check
         env:
