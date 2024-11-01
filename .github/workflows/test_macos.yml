@@ -63,13 +63,28 @@ jobs:
 
           library(reticulate)
 
-          path_to_venv <- virtualenv_create(
-            envname = "r-reticulate",
-            python = Sys.which("python"), # placed on PATH by the setup-python action
-            packages = c(
-              "pandas", "matplotlib", "numpy"
-            )
-          )
+          reticulate::py_run_string("
+          import sys
+          import subprocess
+          subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--upgrade', 'pip'])
+            ")
+            
+            # Install required packages
+          reticulate::py_run_string("
+          import sys
+          import subprocess
+          
+          # Install basic packages
+          packages = ['numpy', 'pandas', 'matplotlib']
+          for package in packages:
+              subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--upgrade', package])
+          
+          # Install pyEpiabm from GitHub
+          subprocess.check_call([
+              sys.executable, '-m', 'pip', 'install', '--upgrade',
+              'git+https://github.com/SABS-R3-Epidemiology/epiabm.git@main#egg=pyEpiabm&subdirectory=pyEpiabm'
+          ])
+            ")
 
           writeLines(
             paste0("RETICULATE_PYTHON=", virtualenv_python(path_to_venv)),
