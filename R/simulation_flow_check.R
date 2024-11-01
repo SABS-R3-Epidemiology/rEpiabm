@@ -96,12 +96,8 @@ sim$compress_csv()
 
 # Create dataframe for plots
 filename <- here("simulation_outputs", "output.csv")
-df <- pd$read_csv(filename)
+df <- read.csv(filename)
 
-# Convert pandas dataframe to R dataframe
-df_r <- as.data.frame(df)
-
-# Load library for plotting
 library(ggplot2)
 
 # Reshape the data from wide to long format using base R
@@ -111,7 +107,7 @@ status_columns <- c("InfectionStatus.Susceptible",
                     "InfectionStatus.Dead")
 
 df_long <- pivot_longer(
-  df_r,
+  df,
   cols = all_of(status_columns),
   names_to = "Status",
   values_to = "Count"
