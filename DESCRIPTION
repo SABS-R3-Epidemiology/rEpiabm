@@ -15,6 +15,7 @@ Suggests: tinytest
 Imports: 
     ggplot2,
     here,
+    tidyr,
     reticulate (>= 1.14)
 Depends: R (>= 3.3.0)
 Config/reticulate:
