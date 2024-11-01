@@ -9,7 +9,6 @@ on:
       - '**'
 
 jobs:
-
   test:
     name: tests on Windows with R ${{ matrix.R }}
     runs-on: windows-latest
@@ -19,7 +18,6 @@ jobs:
         R: [ '4.1.0' ]
 
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -28,15 +26,21 @@ jobs:
         with:
           r-version: ${{ matrix.R }}
           Ncpus: 2
-          architecture: 'x86'
-          
+          architecture: 'x64'  # Changed from 'x86' to 'x64'
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          architecture: 'x64'
+
       - name: Query dependencies
         run: |
           install.packages('remotes')
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
         
-      - name: cache R installed packages
+      - name: Cache R packages
         uses: actions/cache@v2.1.7
         id: cache
         with:
@@ -44,7 +48,7 @@ jobs:
             ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-R${{ matrix.R }}-2-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-R${{ matrix.R }}-2-
-      
+
       - name: Install packages
         run: |
           install.packages(c("devtools"))
