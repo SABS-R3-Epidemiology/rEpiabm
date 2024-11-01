@@ -12,6 +12,15 @@ jobs:
   test:
     name: tests on Windows with R ${{ matrix.R }}
     runs-on: windows-latest
+    env:
+      R_ARCH: x64
+      R_CHECK_SKIP_ARCH_CHECK: true
+      _R_CHECK_CRAN_INCOMING_REMOTE_: false
+      _R_CHECK_FORCE_SUGGESTS_: false
+      _R_CHECK_SYSTEM_CLOCK_: false
+      NOT_CRAN: true
+      _R_CHECK_INSTALL_ARCH_: false
+      R_INSTALL_ARG: --no-multiarch
     strategy:
       fail-fast: false
       matrix:
@@ -52,11 +61,9 @@ jobs:
         shell: Rscript {0}
 
       - name: Check
-        env:
-          _R_CHECK_CRAN_INCOMING_REMOTE_: false
         run: |
           options(crayon.enabled = TRUE)
-          rcmdcheck::rcmdcheck(args = c(“--no-manual”, “--as-cran”, “--no-multiarch”), error_on = “error”, check_dir = “check”)
+          rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran", "--no-multiarch"), error_on = "error", check_dir = "check")
         shell: Rscript {0}
 
       - name: Show testthat output
