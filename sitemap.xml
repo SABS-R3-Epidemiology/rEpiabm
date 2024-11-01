@@ -3,6 +3,11 @@
 <url><loc>/LICENSE-text.html</loc></url>
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
+<url><loc>/reference/check_python_env.html</loc></url>
+<url><loc>/reference/create_python_env.html</loc></url>
+<url><loc>/reference/ensure_python_dependencies.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/initialize_python_env.html</loc></url>
+<url><loc>/reference/load_python_modules.html</loc></url>
 </urlset>
 
