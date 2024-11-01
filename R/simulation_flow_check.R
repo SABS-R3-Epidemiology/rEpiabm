@@ -101,9 +101,6 @@ df <- pd$read_csv(filename)
 # Convert pandas dataframe to R dataframe
 df_r <- as.data.frame(df)
 
-print(df)
-print(df_r)
-
 # Load library for plotting
 library(ggplot2)
 
