@@ -28,7 +28,7 @@ jobs:
         with:
           r-version: ${{ matrix.R }}
           Ncpus: 2
-          architecture: 'x64'
+          architecture: 'x86'
           
       - name: Query dependencies
         run: |
