@@ -3,23 +3,21 @@ name: "Unit tests: macOS"
 on:
   push:
     branches:
-      - main
+      - '**'
   pull_request:
     branches:
       - '**'
 
 jobs:
-
   test:
     name: tests on macOS with R ${{ matrix.R }}
     runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
-        R: [ '4.1.0' ]
+        R: ['4.1.0']
 
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -28,6 +26,11 @@ jobs:
         with:
           r-version: ${{ matrix.R }}
           Ncpus: 2
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
           
       - name: Query dependencies
         run: |
@@ -50,6 +53,58 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
+
+      - name: setup r-reticulate venv
+        shell: Rscript {0}
+        run: |
+          library(reticulate)
+
+          reticulate::py_run_string("
+          import sys
+          import subprocess
+          subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--upgrade', 'pip'])
+          ")
+          
+          # Install required packages
+          reticulate::py_run_string("
+          import sys
+          import subprocess
+          
+          # Install basic packages
+          packages = ['numpy', 'pandas', 'matplotlib']
+          for package in packages:
+              subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--upgrade', package])
+          
+          # Install pyEpiabm from GitHub
+          subprocess.check_call([
+              sys.executable, '-m', 'pip', 'install', '--upgrade',
+              'git+https://github.com/SABS-R3-Epidemiology/epiabm.git@main#egg=pyEpiabm&subdirectory=pyEpiabm'
+          ])
+          ")
+          
+          env_name <- "r-py-env"
+          python_version = "3.9"
+          tryCatch({
+            # Check if virtualenv package is available
+            if (!reticulate::virtualenv_exists(env_name)) {
+              message(sprintf("Creating new Python virtual environment: %s", env_name))
+              
+              # Create virtual environment with system site packages to help with SSL
+              reticulate::virtualenv_create(
+                envname = env_name,
+                version = python_version,
+                packages = "pip",
+                system_site_packages = TRUE
+              )
+            }
+            
+            # Activate the environment
+            reticulate::use_virtualenv(env_name, required = TRUE)
+            return(TRUE)
+          }, error = function(e) {
+            warning(sprintf("Failed to create/activate Python environment: %s", e$message))
+            return(FALSE)
+          })
 
       - name: Check
         env:

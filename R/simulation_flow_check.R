@@ -2,15 +2,20 @@
 # Example simulation script with data output
 #
 # Import dependencies
+source("R/zzz.R")
+initialize_python_env()
+check_python_env()
 
 library(reticulate)
+#library(rEpiabm)
 library(here)
+library(tidyr)
 
-os <- import("os")
-logging <- import("logging")
-pd <- import("pandas")
-plt <- import("matplotlib.pyplot")
-pe <- import("pyEpiabm")
+os <- import("os", delay_load = TRUE)
+logging <- import("logging", delay_load = TRUE)
+pd <- import("pandas", delay_load = TRUE)
+plt <- import("matplotlib.pyplot", delay_load = TRUE)
+pe <- import("pyEpiabm", delay_load = TRUE)
 
 # Set working directory for relative directory references
 base_dir <- here()
@@ -91,12 +96,8 @@ sim$compress_csv()
 
 # Create dataframe for plots
 filename <- here("simulation_outputs", "output.csv")
-df <- pd$read_csv(filename)
+df <- read.csv(filename)
 
-# Convert pandas dataframe to R dataframe
-df_r <- as.data.frame(df)
-
-# Load library for plotting
 library(ggplot2)
 
 # Reshape the data from wide to long format using base R
@@ -105,13 +106,15 @@ status_columns <- c("InfectionStatus.Susceptible",
                     "InfectionStatus.Recovered",
                     "InfectionStatus.Dead")
 
-df_long <- data.frame(
-  time = rep(df_r$time, length(status_columns)),
-  Status = factor(rep(status_columns, each = nrow(df_r)),
-                  levels = status_columns,
-                  labels = c("Susceptible", "Infected", "Recovered", "Dead")),
-  Count = unlist(df_r[status_columns])
+df_long <- pivot_longer(
+  df,
+  cols = all_of(status_columns),
+  names_to = "Status",
+  values_to = "Count"
 )
+df_long$Status <- factor(df_long$Status,
+                        levels = status_columns,
+                        labels = c("Susceptible", "Infected", "Recovered", "Dead"))
 
 # Create the plot
 p <- ggplot(df_long, aes(x = time, y = Count, color = Status)) +
