@@ -9,6 +9,7 @@ check_python_env()
 library(reticulate)
 #library(rEpiabm)
 library(here)
+library(tidyr)
 
 os <- import("os", delay_load = TRUE)
 logging <- import("logging", delay_load = TRUE)
@@ -100,6 +101,9 @@ df <- pd$read_csv(filename)
 # Convert pandas dataframe to R dataframe
 df_r <- as.data.frame(df)
 
+print(df)
+print(df_r)
+
 # Load library for plotting
 library(ggplot2)
 
@@ -109,13 +113,15 @@ status_columns <- c("InfectionStatus.Susceptible",
                     "InfectionStatus.Recovered",
                     "InfectionStatus.Dead")
 
-df_long <- data.frame(
-  time = rep(df_r$time, length(status_columns)),
-  Status = factor(rep(status_columns, each = nrow(df_r)),
-                  levels = status_columns,
-                  labels = c("Susceptible", "Infected", "Recovered", "Dead")),
-  Count = unlist(df_r[status_columns])
-)
+df_long <- df_r %>%
+  pivot_longer(
+    cols = all_of(status_columns),
+    names_to = "Status",
+    values_to = "Count"
+  ) %>%
+  mutate(Status = factor(Status,
+                        levels = status_columns,
+                        labels = c("Susceptible", "Infected", "Recovered", "Dead")))
 
 # Create the plot
 p <- ggplot(df_long, aes(x = time, y = Count, color = Status)) +
