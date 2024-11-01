@@ -26,13 +26,8 @@ jobs:
         with:
           r-version: ${{ matrix.R }}
           Ncpus: 2
-          architecture: 'x86'
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-          architecture: 'x86'
+          architecture: 'x64'
+          multiarch: false
 
       - name: Query dependencies
         run: |
