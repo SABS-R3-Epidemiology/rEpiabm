@@ -6,15 +6,18 @@ local <- new.env()
 #' @param python_version Character. Python version to use (e.g., "3.8")
 #' @return Logical indicating success
 #' @keywords internal
-create_python_env <- function(env_name = "r-py-env", python_version = "3.8") {
+create_python_env <- function(env_name = "r-py-env", python_version = "3.9") {
   tryCatch({
     # Check if virtualenv package is available
     if (!reticulate::virtualenv_exists(env_name)) {
       message(sprintf("Creating new Python virtual environment: %s", env_name))
+      
+      # Create virtual environment with system site packages to help with SSL
       reticulate::virtualenv_create(
         envname = env_name,
         version = python_version,
-        packages = "pip"
+        packages = "pip",
+        system_site_packages = TRUE
       )
     }
     
@@ -53,31 +56,49 @@ create_python_env <- function(env_name = "r-py-env", python_version = "3.8") {
 #' Ensure all required Python dependencies are installed
 #' @keywords internal
 ensure_python_dependencies <- function() {
-  required_packages <- list(
-    list(package = "numpy", pip = TRUE),
-    list(package = "pandas", pip = TRUE),
-    list(package = "matplotlib", pip = TRUE),
-    list(package = "pyEpiabm", pip = TRUE,
-         pip_options = "--index-url git+https://github.com/SABS-R3-Epidemiology/epiabm.git@main#egg=pyEpiabm&subdirectory=pyEpiabm")
-  )
+  # Upgrade pip
+  reticulate::py_run_string("
+import sys
+import subprocess
+subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--upgrade', 'pip'])
+  ")
   
-  # Check and install each package if needed
-  for (pkg_info in required_packages) {
-    pkg_name <- pkg_info$package
-    if (!reticulate::py_module_available(pkg_name)) {
-      message(sprintf("Installing required Python package: %s", pkg_name))
-      
-      tryCatch({
-        if (!is.null(pkg_info$pip_options)) {
-          reticulate::py_install(pkg_info$pip_options, pip = TRUE)
-        } else {
-          reticulate::py_install(pkg_name, pip = pkg_info$pip)
-        }
-      }, error = function(e) {
-        warning(sprintf("Failed to install %s: %s", pkg_name, e$message))
-      })
-    }
+  # Install required packages
+  reticulate::py_run_string("
+import sys
+import subprocess
+
+# Install basic packages
+packages = ['numpy', 'pandas', 'matplotlib']
+for package in packages:
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--upgrade', package])
+
+# Install pyEpiabm from GitHub
+subprocess.check_call([
+    sys.executable, '-m', 'pip', 'install', '--upgrade',
+    'git+https://github.com/SABS-R3-Epidemiology/epiabm.git@main#egg=pyEpiabm&subdirectory=pyEpiabm'
+])
+  ")
+  
+  # Verify installations
+  result <- reticulate::py_run_string("
+import importlib.util
+
+packages = ['numpy', 'pandas', 'matplotlib', 'pyEpiabm']
+missing = []
+
+for package in packages:
+    if importlib.util.find_spec(package) is None:
+        missing.append(package)
+        
+print('Missing packages:', missing if missing else 'None')
+  ")
+  
+  if (length(result$missing) > 0) {
+    stop("Failed to install required packages: ", paste(result$missing, collapse = ", "))
   }
+  
+  message("All required packages installed successfully")
 }
 
 #' Load Python modules into package environment
