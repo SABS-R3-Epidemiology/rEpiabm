@@ -7,5 +7,6 @@
 ^\.github$
 ^doc$
 ^Meta$
-^windows/i386/*
+^windows\\i386\*
+^i386\.*$
 .lintr
