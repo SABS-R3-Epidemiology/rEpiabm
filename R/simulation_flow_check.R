@@ -113,15 +113,15 @@ status_columns <- c("InfectionStatus.Susceptible",
                     "InfectionStatus.Recovered",
                     "InfectionStatus.Dead")
 
-df_long <- df_r %>%
-  pivot_longer(
-    cols = all_of(status_columns),
-    names_to = "Status",
-    values_to = "Count"
-  ) %>%
-  mutate(Status = factor(Status,
+df_long <- pivot_longer(
+  df_r,
+  cols = all_of(status_columns),
+  names_to = "Status",
+  values_to = "Count"
+)
+df_long$Status <- factor(df_long$Status,
                         levels = status_columns,
-                        labels = c("Susceptible", "Infected", "Recovered", "Dead")))
+                        labels = c("Susceptible", "Infected", "Recovered", "Dead"))
 
 # Create the plot
 p <- ggplot(df_long, aes(x = time, y = Count, color = Status)) +
