@@ -9,30 +9,29 @@ on:
       - '**'
 
 jobs:
+
   test:
     name: tests on macOS with R ${{ matrix.R }}
     runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
-        R: ['4.1.0']
-        python-version: ['3.10']  # Explicitly define Python version in matrix
+        R: [ '4.1.0' ]
 
     steps:
+
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
+      
+      - name: Install build dependencies
+        run: |
+          brew install curl
 
       - name: Setup R
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.R }}
           Ncpus: 2
-      
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: 'pip'
           
       - name: Query dependencies
         run: |
@@ -40,7 +39,7 @@ jobs:
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
         
-      - name: Cache R packages
+      - name: cache R installed packages
         uses: actions/cache@v2
         id: cache
         with:
@@ -56,38 +55,9 @@ jobs:
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
-      - name: Setup Python environment
-        shell: Rscript {0}
-        run: |
-          library(reticulate)
-          
-          # Use the GitHub Actions Python
-          Sys.setenv(RETICULATE_PYTHON = Sys.which("python"))
-          
-          # Install pip packages
-          system2("pip", c("install", "--upgrade", "pip"))
-          system2("pip", c("install", "--upgrade", "numpy", "pandas", "matplotlib"))
-          system2("pip", c("install", "--upgrade", "git+https://github.com/SABS-R3-Epidemiology/epiabm.git@main#egg=pyEpiabm&subdirectory=pyEpiabm"))
-          
-          # Verify Python configuration
-          py_config <- reticulate::py_config()
-          message("Python configuration:")
-          message(paste("Python version:", py_config$version))
-          message(paste("Python path:", py_config$python))
-          
-          # Test imports
-          reticulate::py_run_string("
-          import numpy
-          import pandas
-          import matplotlib
-          import pyEpiabm
-          print('All required Python packages successfully imported')
-          ")
-
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
-          RETICULATE_PYTHON: ${{ env.pythonLocation }}/python
         run: |
           options(crayon.enabled = TRUE)
           rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "error", check_dir = "check")
@@ -96,3 +66,4 @@ jobs:
       - name: Show testthat output
         if: always()
         run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
