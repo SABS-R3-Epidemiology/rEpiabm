@@ -26,7 +26,7 @@ jobs:
         with:
           r-version: ${{ matrix.R }}
           Ncpus: 2
-          architecture: 'x64'
+          r-arch: 'x64'
           multiarch: false
 
       - name: Query dependencies
@@ -58,11 +58,6 @@ jobs:
           options(crayon.enabled = TRUE)
           rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "error", check_dir = "check")
         shell: Rscript {0}
-        with:
-          r-version: ${{ matrix.R }}
-          Ncpus: 2
-          architecture: 'x64'
-          multiarch: false
 
       - name: Show testthat output
         if: always()

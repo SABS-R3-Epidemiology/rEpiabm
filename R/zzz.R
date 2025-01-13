@@ -6,7 +6,7 @@ local <- new.env()
 #' @param python_version Character. Python version to use (e.g., "3.8")
 #' @return Logical indicating success
 #' @keywords internal
-create_python_env <- function(env_name = "r-py-env", python_version = "3.9") {
+create_python_env <- function(env_name = "r-reticulate", python_version = "3.9") {
   tryCatch({
     # Check if virtualenv package is available
     if (!reticulate::virtualenv_exists(env_name)) {
