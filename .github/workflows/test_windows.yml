@@ -18,19 +18,6 @@ jobs:
         R: [ '4.1.0' ]
 
     steps:
-      - name: Check
-        env:
-          _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: |
-          options(crayon.enabled = TRUE)
-          rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "error", check_dir = "check")
-        shell: Rscript {0}
-        with:
-          r-version: ${{ matrix.R }}
-          Ncpus: 2
-          architecture: 'x64'
-          multiarch: false
-
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -64,6 +51,18 @@ jobs:
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
+      - name: Check
+        env:
+          _R_CHECK_CRAN_INCOMING_REMOTE_: false
+        run: |
+          options(crayon.enabled = TRUE)
+          rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "error", check_dir = "check")
+        shell: Rscript {0}
+        with:
+          r-version: ${{ matrix.R }}
+          Ncpus: 2
+          architecture: 'x64'
+          multiarch: false
 
       - name: Show testthat output
         if: always()
