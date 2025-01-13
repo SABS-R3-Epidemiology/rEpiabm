@@ -53,6 +53,7 @@ jobs:
           install.packages(c("devtools"))
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
+          reticulate::install_python(version = 3.9)
         shell: Rscript {0}
 
       - name: Check
