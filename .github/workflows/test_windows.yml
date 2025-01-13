@@ -11,13 +11,21 @@ on:
 jobs:
   test:
     name: tests on Windows with R ${{ matrix.R }}
-    runs-on: windows-latest
+    runs-on: windows-latest-64
     strategy:
       fail-fast: false
       matrix:
         R: [ '4.1.0' ]
 
     steps:
+      - name: Check Windows architecture
+        run: |
+          if (-not [Environment]::Is64BitOperatingSystem) { throw "Not 64-bit Windows" }
+          Write-Host "OS Architecture: $([Environment]::Is64BitOperatingSystem)"
+          Write-Host "Process Architecture: $([Environment]::Is64BitProcess)"
+          systeminfo | findstr /B /C:"OS Name" /C:"OS Version" /C:"System Type"
+        shell: pwsh
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -28,6 +36,14 @@ jobs:
           Ncpus: 2
           r-arch: 'x64'
           multiarch: false
+
+      - name: Verify R architecture
+        run: |
+          Rscript -e "if(R.version$arch != 'x64') stop('R architecture is not 64-bit!')"
+          Rscript -e "cat('R Architecture:', R.version$arch, '\n')"
+          Rscript -e "cat('.Machine$sizeof.pointer:', .Machine$sizeof.pointer, '\n')"
+          Rscript -e "cat('Using R at:', R.home(), '\n')"
+        shell: cmd
 
       - name: Query dependencies
         run: |
