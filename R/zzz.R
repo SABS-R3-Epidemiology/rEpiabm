@@ -6,8 +6,9 @@ local <- new.env()
 #' @param python_version Character. Python version to use (e.g., "3.8")
 #' @return Logical indicating success
 #' @keywords internal
-create_python_env <- function(env_name = "r-reticulate", 
-                            python_version = "3.9") {
+create_python_env <- function(
+    env_name = "r-reticulate",
+    python_version = "3.9") {
   tryCatch({
     # Check if virtualenv package is available
     if (!reticulate::virtualenv_exists(env_name)) {
@@ -20,11 +21,11 @@ create_python_env <- function(env_name = "r-reticulate",
         system_site_packages = TRUE
       )
     }
-  # Activate the environment
+    # Activate the environment
     reticulate::use_virtualenv(env_name, required = TRUE)
     return(TRUE)
   }, error = function(e) {
-    warning(sprintf("Failed to create/activate Python environment: %s", 
+    warning(sprintf("Failed to create/activate Python environment: %s",
                    e$message))
     return(FALSE)
   })
@@ -77,7 +78,8 @@ for package in packages:
 # Install pyEpiabm from GitHub
 subprocess.check_call([
     sys.executable, '-m', 'pip', 'install', '--upgrade',
-    'git+https://github.com/SABS-R3-Epidemiology/epiabm.git@main#egg=pyEpiabm&subdirectory=pyEpiabm'
+    'git+https://github.com/SABS-R3-Epidemiology/
+epiabm.git@main#egg=pyEpiabm&subdirectory=pyEpiabm'
 ])
   ")
   # Verify installations
@@ -94,7 +96,7 @@ for package in packages:
 print('Missing packages:', missing if missing else 'None')
   ")
   if (length(result$missing) > 0) {
-    stop("Failed to install required packages: ", 
+    stop("Failed to install required packages: ",
          paste(result$missing, collapse = ", "))
   }
   message("All required packages installed successfully")
@@ -131,8 +133,8 @@ check_python_env <- function() {
   # Print Python information
   cat(sprintf("Python version: %s\n", reticulate::py_version()))
   cat(sprintf("Python path: %s\n", python_config$python))
-  cat(sprintf("virtualenv: %s\n", 
-              if (is.null(python_config$virtualenv)) "None" 
+  cat(sprintf("virtualenv: %s\n",
+              if (is.null(python_config$virtualenv)) "None"
               else python_config$virtualenv))
   # Check required packages
   required_packages <- c("numpy", "pandas", "matplotlib", "pyEpiabm")
