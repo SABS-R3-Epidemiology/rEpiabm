@@ -1,25 +1,34 @@
 Package: rEpiabm
 Type: Package
-Title: R-wrapper of Epiabm
+Title: R-Wrapper of Epiabm
 Version: 0.0.2
 Authors@R: c(
-    person('Anita', 'Applegarth', role = c('aut', 'cre', 'cph'), email = 'anita.applegarth@ox.ac.uk'), 
-    person('Kingley', 'Oguma', role = 'aut', email = "kemukperuo@gmail.com"))
-Description: Wraps the epiabm Python module. R users can...
+    person('Anita', 'Applegarth', role = c('aut', 'cre', 'cph'), email = 'anita.applegarth@reuben.ox.ac.uk'),
+    person('Kingsley', 'Oguma', role = 'aut', email = "kemukperuo@gmail.com")
+    )
+Description: Wraps the epiabm Python module in R.
 License: BSD_3_clause
 Encoding: UTF-8
 Archs: x64
 SystemRequirements: Python (>= 2.7.0)
-Suggests: 
-    tinytest
-Depends:
-    reticulate (>= 1.14),
-    R (>= 3.3.0)
+Suggests: tinytest
+Imports: 
+    ggplot2,
+    here,
+    tidyr,
+    reticulate (>= 1.14)
+Depends: R (>= 3.3.0)
 Config/reticulate:
-  list(
-    packages = list(
-      list(package = "numpy", pip = TRUE),
-      list(package = "matplotlib", pip = TRUE)
+    list(
+        packages = list(
+            list(package = "numpy", pip = TRUE),
+            list(package = "pandas", pip = TRUE),
+            list(package = "matplotlib", pip = TRUE),
+            list(
+                package = "pyEpiabm",
+                pip = TRUE,
+                pip_options = "--extra-index-url https://github.com/SABS-R3-Epidemiology/epiabm.git@main#egg=pyEpiabm&subdirectory=pyEpiabm"
+            )
+        )
     )
-  )    
-
+RoxygenNote: 7.3.2
