@@ -49,7 +49,8 @@ create_python_env <- function(env_name = "r-reticulate", python_version = "3.9")
   tryCatch({
     load_python_modules()
   }, error = function(e) {
-    warning(sprintf("Error loading Python dependencies: %s\nPlease run check_python_env() to diagnose issues.", e$message))
+    warning(sprintf("Error loading Python dependencies: 
+    %s\nPlease run check_python_env() to diagnose issues.", e$message))
   })
 }
 
@@ -60,9 +61,9 @@ ensure_python_dependencies <- function() {
   reticulate::py_run_string("
 import sys
 import subprocess
-subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--upgrade', 'pip'])
+subprocess.check_call([sys.executable, '-m', 'pip', 'install', 
+'--upgrade', 'pip'])
   ")
-  
   # Install required packages
   reticulate::py_run_string("
 import sys
@@ -71,15 +72,16 @@ import subprocess
 # Install basic packages
 packages = ['numpy', 'pandas', 'matplotlib']
 for package in packages:
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--upgrade', package])
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install',
+     '--upgrade', package])
 
 # Install pyEpiabm from GitHub
 subprocess.check_call([
     sys.executable, '-m', 'pip', 'install', '--upgrade',
-    'git+https://github.com/SABS-R3-Epidemiology/epiabm.git@main#egg=pyEpiabm&subdirectory=pyEpiabm'
+    'git+https://github.com/SABS-R3-Epidemiology/epiabm.git@main#egg=
+    pyEpiabm&subdirectory=pyEpiabm'
 ])
   ")
-  
   # Verify installations
   result <- reticulate::py_run_string("
 import importlib.util
@@ -93,11 +95,10 @@ for package in packages:
         
 print('Missing packages:', missing if missing else 'None')
   ")
-  
-  if (length(result$missing) > 0) {
-    stop("Failed to install required packages: ", paste(result$missing, collapse = ", "))
+  if (length(result$missing) > 0){
+    stop("Failed to install required packages: ", paste(result$missing,
+    collapse = ", "))
   }
-  
   message("All required packages installed successfully")
 }
 
@@ -112,7 +113,6 @@ load_python_modules <- function() {
     plt = "matplotlib.pyplot",
     pe = "pyEpiabm"
   )
-  
   # Import each module
   for (var_name in names(modules)) {
     module_name <- modules[[var_name]]
@@ -130,23 +130,21 @@ load_python_modules <- function() {
 check_python_env <- function() {
   # Get Python configuration
   python_config <- reticulate::py_config()
-  
   # Print Python information
   cat(sprintf("Python version: %s\n", reticulate::py_version()))
   cat(sprintf("Python path: %s\n", python_config$python))
-  cat(sprintf("virtualenv: %s\n", if(is.null(python_config$virtualenv)) "None" else python_config$virtualenv))
-  
+  cat(sprintf("virtualenv: %s\n", if (is.null(python_config$virtualenv))
+   "None" else python_config$virtualenv))
   # Check required packages
   required_packages <- c("numpy", "pandas", "matplotlib", "pyEpiabm")
-  
   cat("\nPackage Status:\n")
   pkg_status <- list()
-  
   for (pkg in required_packages) {
     if (reticulate::py_module_available(pkg)) {
       # Try to get version information
       tryCatch({
-        version <- reticulate::py_eval(sprintf("__import__('%s').__version__", pkg))
+        version <- reticulate::py_eval(sprintf("__import__('%s').__version__",
+        pkg))
         cat(sprintf("✓ %s (version %s)\n", pkg, version))
         pkg_status[[pkg]] <- TRUE
       }, error = function(e) {
@@ -158,7 +156,6 @@ check_python_env <- function() {
       pkg_status[[pkg]] <- FALSE
     }
   }
-  
   # Return invisibly whether all packages are available
   invisible(all(unlist(pkg_status)))
 }
@@ -168,19 +165,15 @@ check_python_env <- function() {
 #' @export
 initialize_python_env <- function(force = FALSE) {
   env_name <- "r-py-env"
-  
   if (force && reticulate::virtualenv_exists(env_name)) {
     message("Removing existing Python environment...")
     reticulate::virtualenv_remove(env_name)
   }
-  
   # Create and activate environment
   if (create_python_env(env_name)) {
     message("Python environment successfully created/activated")
-    
     # Install dependencies
     ensure_python_dependencies()
-    
     # Check environment
     check_python_env()
   } else {
