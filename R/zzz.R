@@ -26,7 +26,7 @@ create_python_env <- function(
     return(TRUE)
   }, error = function(e) {
     warning(sprintf("Failed to create/activate Python environment: %s",
-                   e$message))
+                    e$message))
     return(FALSE)
   })
 }
