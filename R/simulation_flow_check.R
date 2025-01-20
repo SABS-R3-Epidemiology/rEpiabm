@@ -4,7 +4,7 @@ library(tidyr)
 library(ggplot2)
 
 # Initialize Python environment
-initialize_simulation_env <- function() {
+initialize_simulation_env <- function(parameter_file= "simple_parameters.json") {
   source("R/zzz.R")
   initialize_python_env()
   check_python_env()
@@ -15,74 +15,12 @@ initialize_simulation_env <- function() {
   pd <- import("pandas", delay_load = TRUE)
   plt <- import("matplotlib.pyplot", delay_load = TRUE)
   pe <- import("pyEpiabm", delay_load = TRUE)
+
+  pe$Parameters$set_file(here("data", parameter_file))
   
   return(pe)
 }
 
-# Create population configuration
-create_population_params <- function(pop_size = 100, 
-                                   cell_num = 2,
-                                   microcell_num = 2,
-                                   household_num = 5,
-                                   place_num = 2) {
-  list(
-    population_size = as.integer(pop_size),
-    cell_number = as.integer(cell_num),
-    microcell_number = as.integer(microcell_num),
-    household_number = as.integer(household_num),
-    place_number = as.integer(place_num)
-  )
-}
-
-# Create simulation parameters
-create_sim_params <- function(start_time = 0,
-                            end_time = 60,
-                            initial_infected = 10,
-                            include_waning = TRUE) {
-  list(
-    simulation_start_time = as.integer(start_time),
-    simulation_end_time = as.integer(end_time),
-    initial_infected_number = as.integer(initial_infected),
-    include_waning = include_waning
-  )
-}
-
-# Create file output parameters
-create_file_params <- function(output_dir = "simulation_outputs",
-                             output_file = "output.csv",
-                             spatial = FALSE,
-                             age_strat = FALSE) {
-  list(
-    output_file = output_file,
-    output_dir = here(output_dir),
-    spatial_output = spatial,
-    age_stratified = age_strat
-  )
-}
-
-# Create demographic file parameters
-create_dem_file_params <- function(output_dir = "simulation_outputs",
-                                 spatial = FALSE,
-                                 age = FALSE) {
-  list(
-    output_dir = here(output_dir),
-    spatial_output = spatial,
-    age_output = age
-  )
-}
-
-# Create infection history parameters
-create_inf_history_params <- function(output_dir = "simulation_outputs",
-                                    status = TRUE,
-                                    infectiousness = TRUE,
-                                    compress = FALSE) {
-  list(
-    output_dir = here(output_dir),
-    status_output = status,
-    infectiousness_output = infectiousness,
-    compress = compress
-  )
-}
 
 # Run simulation
 run_simulation <- function(pe, pop_params, sim_params, file_params, 
@@ -194,15 +132,43 @@ run_complete_simulation <- function(output_dir = "simulation_outputs",
   # Initialize environment
   pe <- initialize_simulation_env()
   
-  # Set parameters file
-  pe$Parameters$set_file(here("data", "simple_parameters.json"))
-  
   # Create all parameter sets
-  pop_params <- create_population_params()
-  sim_params <- create_sim_params()
-  file_params <- create_file_params(output_dir, output_file)
-  dem_file_params <- create_dem_file_params(output_dir)
-  inf_history_params <- create_inf_history_params(output_dir)
+  # Create all parameter sets
+  pop_params <- list(
+    population_size = as.integer(100),
+    cell_number = as.integer(2),
+    microcell_number = as.integer(2),
+    household_number = as.integer(5),
+    place_number = as.integer(2)
+  )
+  
+  sim_params <- list(
+    simulation_start_time = as.integer(0),
+    simulation_end_time = as.integer(60),
+    initial_infected_number = as.integer(10),
+    include_waning = TRUE
+  )
+  
+  file_params <- list(
+    output_file = "output.csv",
+    output_dir = here("simulation_outputs"),
+    spatial_output = FALSE,
+    age_stratified = FALSE
+  )
+  
+  dem_file_params <- list(
+    output_dir = here("simulation_outputs"),
+    spatial_output = FALSE,
+    age_output = FALSE
+  )
+
+  inf_history_params <- list(
+    output_dir = here("simulation_outputs"),
+    status_output = TRUE,
+    infectiousness_output = TRUE,
+    compress = FALSE
+  )
+
   
   # Run simulation
   sim <- run_simulation(pe, pop_params, sim_params, file_params, 
