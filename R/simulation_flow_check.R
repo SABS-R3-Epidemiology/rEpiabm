@@ -23,14 +23,19 @@ initialize_simulation_env <- function(parameter_file= "simple_parameters.json") 
 
 
 # Run simulation
-run_simulation <- function(pe, pop_params, sim_params, file_params, 
-                         dem_file_params, inf_history_params, seed = 42) {
+run_simulation <- function(pe, pop_params, sim_params, file_params,
+                           dem_file_params, inf_history_params, seed = 42,
+                           use_toy_example = FALSE) {
   # Set seed
   pe$routine$Simulation$set_random_seed(seed = as.integer(seed))
   
-  # Create population
-  population <- pe$routine$ToyPopulationFactory()$make_pop(pop_params)
-  
+  # Create population or load from file
+  if (use_toy_example) {
+    population <- pe$routine$ToyPopulationFactory()$make_pop(pop_params)
+  } else {
+    population <- pe$routine$PopulationFactory()$make_pop_from_file(file_params$output_file)
+  }
+
   # Create and configure simulation
   sim <- pe$routine$Simulation()
   sim$configure(
@@ -128,11 +133,11 @@ save_sir_plot <- function(plot, filename, width = 10, height = 6, dpi = 300) {
 # Example usage:
 run_complete_simulation <- function(output_dir = "simulation_outputs",
                                   output_file = "output.csv",
-                                  plot_file = "simulation_flow_SIR_plot.png") {
+                                  plot_file = "simulation_flow_SIR_plot.png",
+                                  use_toy_example = TRUE) {
   # Initialize environment
   pe <- initialize_simulation_env()
   
-  # Create all parameter sets
   # Create all parameter sets
   pop_params <- list(
     population_size = as.integer(100),
@@ -145,7 +150,9 @@ run_complete_simulation <- function(output_dir = "simulation_outputs",
   sim_params <- list(
     simulation_start_time = as.integer(0),
     simulation_end_time = as.integer(60),
+    simulation_seed = TRUE,
     initial_infected_number = as.integer(10),
+    initial_infect_cell = TRUE,
     include_waning = TRUE
   )
   
@@ -166,13 +173,15 @@ run_complete_simulation <- function(output_dir = "simulation_outputs",
     output_dir = here("simulation_outputs"),
     status_output = TRUE,
     infectiousness_output = TRUE,
-    compress = FALSE
+    compress = FALSE,
+    secondary_infections_output = TRUE,
+    generation_time_output =  TRUE
   )
 
   
   # Run simulation
   sim <- run_simulation(pe, pop_params, sim_params, file_params, 
-                       dem_file_params, inf_history_params)
+                       dem_file_params, inf_history_params, use_toy_example = use_toy_example)
   
   # Process data and create plot
   df_long <- process_simulation_data(file.path(output_dir, output_file))
