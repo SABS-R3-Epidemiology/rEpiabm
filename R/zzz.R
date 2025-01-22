@@ -6,12 +6,13 @@ local <- new.env()
 #' @param python_version Character. Python version to use (e.g., "3.8")
 #' @return Logical indicating success
 #' @keywords internal
-create_python_env <- function(env_name = "r-reticulate", python_version = "3.9") {
+create_python_env <- function(
+    env_name = "r-reticulate",
+    python_version = "3.9") {
   tryCatch({
     # Check if virtualenv package is available
     if (!reticulate::virtualenv_exists(env_name)) {
       message(sprintf("Creating new Python virtual environment: %s", env_name))
-      
       # Create virtual environment with system site packages to help with SSL
       reticulate::virtualenv_create(
         envname = env_name,
@@ -20,12 +21,12 @@ create_python_env <- function(env_name = "r-reticulate", python_version = "3.9")
         system_site_packages = TRUE
       )
     }
-    
     # Activate the environment
     reticulate::use_virtualenv(env_name, required = TRUE)
     return(TRUE)
   }, error = function(e) {
-    warning(sprintf("Failed to create/activate Python environment: %s", e$message))
+    warning(sprintf("Failed to create/activate Python environment: %s",
+                    e$message))
     return(FALSE)
   })
 }
@@ -33,24 +34,24 @@ create_python_env <- function(env_name = "r-reticulate", python_version = "3.9")
 .onLoad <- function(libname, pkgname) {
   # Create and activate Python environment
   env_success <- create_python_env()
-  
   if (!env_success) {
-    warning("Failed to set up Python environment. Some functionality may be limited.")
+    warning("Failed to set up Python environment. 
+    Some functionality may be limited.")
     return()
   }
-  
   # Configure reticulate to use the package's environment
   reticulate::configure_environment(pkgname)
-  
   # Install required packages if not present
   ensure_python_dependencies()
-  
   # Import dependencies with error handling
   tryCatch({
     load_python_modules()
   }, error = function(e) {
-    warning(sprintf("Error loading Python dependencies: 
-    %s\nPlease run check_python_env() to diagnose issues.", e$message))
+    warning(sprintf(
+      "Error loading Python dependencies: %s\nPlease 
+      run check_python_env() to diagnose issues.",
+      e$message
+    ))
   })
 }
 
@@ -61,8 +62,8 @@ ensure_python_dependencies <- function() {
   reticulate::py_run_string("
 import sys
 import subprocess
-subprocess.check_call([sys.executable, '-m', 'pip', 'install', 
-'--upgrade', 'pip'])
+subprocess.check_call([sys.executable
+, '-m', 'pip', 'install', '--upgrade', 'pip'])
   ")
   # Install required packages
   reticulate::py_run_string("
@@ -72,9 +73,8 @@ import subprocess
 # Install basic packages
 packages = ['numpy', 'pandas', 'matplotlib']
 for package in packages:
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install',
-     '--upgrade', package])
-
+    subprocess.check_call([sys.executable, '-m', 'pip', 
+    'install', '--upgrade', package])
 # Install pyEpiabm from GitHub
 subprocess.check_call([
     sys.executable, '-m', 'pip', 'install', '--upgrade',
@@ -94,9 +94,9 @@ for package in packages:
         
 print('Missing packages:', missing if missing else 'None')
   ")
-  if (length(result$missing) > 0){
-    stop("Failed to install required packages: ", paste(result$missing,
-    collapse = ", "))
+  if (length(result$missing) > 0) {
+    stop("Failed to install required packages: ",
+         paste(result$missing, collapse = ", "))
   }
   message("All required packages installed successfully")
 }
@@ -132,8 +132,9 @@ check_python_env <- function() {
   # Print Python information
   cat(sprintf("Python version: %s\n", reticulate::py_version()))
   cat(sprintf("Python path: %s\n", python_config$python))
-  cat(sprintf("virtualenv: %s\n", if (is.null(python_config$virtualenv))
-   "None" else python_config$virtualenv))
+  cat(sprintf("virtualenv: %s\n",
+              if (is.null(python_config$virtualenv)) "None"
+              else python_config$virtualenv))
   # Check required packages
   required_packages <- c("numpy", "pandas", "matplotlib", "pyEpiabm")
   cat("\nPackage Status:\n")
@@ -142,8 +143,9 @@ check_python_env <- function() {
     if (reticulate::py_module_available(pkg)) {
       # Try to get version information
       tryCatch({
-        version <- reticulate::py_eval(sprintf("__import__('%s').__version__",
-        pkg))
+        version <- reticulate::py_eval(
+          sprintf("__import__('%s').__version__", pkg)
+        )
         cat(sprintf("✓ %s (version %s)\n", pkg, version))
         pkg_status[[pkg]] <- TRUE
       }, error = function(e) {

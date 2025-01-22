@@ -1,13 +1,13 @@
 #
 # Example simulation script with data output
 #
+
 # Import dependencies
 source("R/zzz.R")
 initialize_python_env()
 check_python_env()
 
 library(reticulate)
-#library(rEpiabm)
 library(here)
 library(tidyr)
 
@@ -24,7 +24,7 @@ base_dir <- here()
 pe$Parameters$set_file(here("data", "simple_parameters.json"))
 
 # Method to set the seed at the start of the simulation, for reproducibility
-pe$routine$Simulation$set_random_seed(seed=as.integer(42))
+pe$routine$Simulation$set_random_seed(seed = as.integer(42))
 
 # Pop_params are used to configure the population structure being used in this
 # simulation.
@@ -37,7 +37,7 @@ pop_params <- list(
 )
 
 # Create a population based on the parameters given.
-population = pe$routine$ToyPopulationFactory()$make_pop(pop_params)
+population <- pe$routine$ToyPopulationFactory()$make_pop(pop_params)
 
 # sim_params
 sim_params <- list(
@@ -101,10 +101,12 @@ df <- read.csv(filename)
 library(ggplot2)
 
 # Reshape the data from wide to long format using base R
-status_columns <- c("InfectionStatus.Susceptible", 
-                    "InfectionStatus.InfectMild",
-                    "InfectionStatus.Recovered",
-                    "InfectionStatus.Dead")
+status_columns <- c(
+  "InfectionStatus.Susceptible",
+  "InfectionStatus.InfectMild",
+  "InfectionStatus.Recovered",
+  "InfectionStatus.Dead"
+)
 
 df_long <- pivot_longer(
   df,
@@ -112,24 +114,35 @@ df_long <- pivot_longer(
   names_to = "Status",
   values_to = "Count"
 )
-df_long$Status <- factor(df_long$Status,
-                        levels = status_columns,
-                        labels = c("Susceptible", "Infected", "Recovered", "Dead"))
+
+df_long$Status <- factor(
+  df_long$Status,
+  levels = status_columns,
+  labels = c("Susceptible", "Infected", "Recovered", "Dead")
+)
 
 # Create the plot
 p <- ggplot(df_long, aes(x = time, y = Count, color = Status)) +
   geom_line() +
-  scale_color_manual(values = c("Susceptible" = "blue",
-                                "Infected" = "red",
-                                "Recovered" = "green",
-                                "Dead" = "black")) +
+  scale_color_manual(
+    values = c(
+      "Susceptible" = "blue",
+      "Infected" = "red",
+      "Recovered" = "green",
+      "Dead" = "black"
+    )
+  ) +
   theme_minimal() +
-  labs(title = "SIR Model Flow",
-       x = "Time",
-       y = "Count") +
-  theme(legend.position = "right",
-        plot.title = element_text(hjust = 0.5),
-        panel.grid.minor = element_blank())
+  labs(
+    title = "SIR Model Flow",
+    x = "Time",
+    y = "Count"
+  ) +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
 
 # Display the plot
 print(p)
