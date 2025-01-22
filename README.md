@@ -19,19 +19,20 @@ To model an epidemic, contact events are represented by the population spatial s
 </div>
 
 ## Running a simulation
-The basic flow of a simulation is described below and an overview of the process is illustrated in Figure 4. The instructions to run a basic simulation is also given; we will use 'Andorra' as the region of interest. A more detailed, complex example is illustrated in this jupyter notebook (ADD LINK). Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
+The basic flow of a simulation is described below and an overview of the process is illustrated in Figure 3. The instructions to run a basic simulation is also given; we will use 'Andorra' as the region of interest. A more detailed, complex example is illustrated in this jupyter notebook (ADD LINK). Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
 
 <figure>
     <img src="./images/program_workflow.png" alt="Overview of simulation workflow">
-    <figcaption><i>Figure 4. Overview of simulation workflow: These steps are required to run a simulation.</i></figcaption>
+    <figcaption><i>Figure 3. Overview of simulation workflow: These steps are required to run a simulation.</i></figcaption>
 </figure>
 
 
 ### Step 1: Set up rEpiabm
 Before running a simulation, rEpiabm needs to be installed with all dependencies mentioned in the DESCRIPTION file. Also, the folder structure used by the R program file needs to be set up for your region of interest.
-
-**Instructions:**
-1. Go to your github personal Settings/Developer Settings
+<div style="background-color: #f8f8f8; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 10px 0;">
+<strong>Instructions:</strong>
+<ol>
+<li>1. Go to your github personal Settings/Developer Settings
 2. Create a new personal access token (fine-grained)
 3. Launch RStudio and type:
 ```file.edit("~/.Renviron")```
@@ -48,7 +49,10 @@ Before running a simulation, rEpiabm needs to be installed with all dependencies
   install.packages("devtools")
   devtools::install_github("SABS-R3-Epidemiology/rEpiabm")
   ```
-7. Copy the example 'Andorra' folder structure within the data folder and name it with your region of interest (include the files as you will need to edit these for your simulation).
+7. Copy the example 'Andorra' folder structure within the data folder and name it with your region of interest (include the files as you will need to edit these for your simulation).</li>
+</ol>
+</div>
+
 
 You are now ready to configure a simulation.
 
