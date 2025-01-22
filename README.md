@@ -10,11 +10,11 @@ To model an epidemic, contact events are represented by the population spatial s
 <div style="display: flex; gap: 20px;">
   <div style="flex: 1;">
     <img src="./images/population_spatial_structure.png" alt="Population spatial structure" width="100%">
-    <p><figcaption><i>Figure 1. Population Spatial Structure: The environment is modelled using <a href="https://github.com/SABS-R3-Epidemiology/EpiGeoPop">EpiGeoPop</a>, which takes a region of interest, creates layers of sub-regions of different types and populates these with individuals.</p><figcaption></i>
+    <p><figcaption><i><b>Figure 1.</b> Population Spatial Structure: The environment is modelled using <a href="https://github.com/SABS-R3-Epidemiology/EpiGeoPop">EpiGeoPop</a>, which takes a region of interest, creates layers of sub-regions of different types and populates these with individuals.</p><figcaption></i>
   </div>
   <div style="flex: 1;">
     <img src="./images/infection_progression.jpg" alt="Infection progression" width="100%">
-    <p><figcaption><i>Figure 2. Infection Progression: The infection progression is represented using a <a href="https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology">compartment model</a> which tracks the daily progress of the disease within an individual.</i><figcaption></p>
+    <p><figcaption><i><b>Figure 2.</b> Infection Progression: The infection progression is represented using a <a href="https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology">compartment model</a> which tracks the daily progress of the disease within an individual.</i><figcaption></p>
   </div>
 </div>
 
@@ -98,10 +98,10 @@ The following parameters are essential and need to be stated by the user to run 
  (copied from 'Andorra' in Step 1 above) and save with your country's name (keep first letter capitalised).
 2. Amend the parameter array household_size_distribution to have your countries' distribution used in step 2. 
  3. Open *andorra_simulation_flow.R* and amend:
- * file_loc: the absolute path to your csv file exported from EpiGeoPop
- * initial_infected_number: in sim_param list, enter the number of infected individuals at the start of the simulation.
- * simulation_end_time: in sim_param list, enter the time for the simulation to run (in days)
- * amend ```Andorra``` in final line with your country.
+    * file_loc: the absolute path to your csv file exported from EpiGeoPop
+    * initial_infected_number: in sim_param list, enter the number of infected individuals at the start of the simulation.
+    * simulation_end_time: in sim_param list, enter the time for the simulation to run (in days)
+    * amend ```Andorra``` in final line with your country.
 
  More detailed instructions are available in the jupyter notebook (ADD REF) and further optional parameters are described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model)
 
