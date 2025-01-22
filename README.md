@@ -10,20 +10,20 @@ To model an epidemic, contact events are represented by the population spatial s
 <div style="display: flex; gap: 20px;">
   <div style="flex: 1;">
     <img src="./images/population_spatial_structure.png" alt="Population spatial structure" width="100%">
-    <p><figcaption><i>Figure 1. Population Spatial Structure: The environment is modelled using <a href="https://github.com/SABS-R3-Epidemiology/EpiGeoPop">EpiGeoPop</a>, which takes a region of interest, creates layers of sub-regions of different types and populates these with individuals.</p><figcaption><i>
+    <p><figcaption><i>Figure 1. Population Spatial Structure: The environment is modelled using <a href="https://github.com/SABS-R3-Epidemiology/EpiGeoPop">EpiGeoPop</a>, which takes a region of interest, creates layers of sub-regions of different types and populates these with individuals.</p><figcaption></i>
   </div>
   <div style="flex: 1;">
     <img src="./images/infection_progression.jpg" alt="Infection progression" width="100%">
-    <p><figcaption><i>Figure 2. Infection Progression: The infection progression is represented using a <a href="https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology">compartment model</a> which tracks the daily progress of the disease within an individual.<i><figcaption></p>
+    <p><figcaption><i>Figure 2. Infection Progression: The infection progression is represented using a <a href="https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology">compartment model</a> which tracks the daily progress of the disease within an individual.</i><figcaption></p>
   </div>
 </div>
 
 ## Running a simulation
-The basic flow of a simulation is described below and an overview of the process is illustrated in Figure 4. The instructions to run a basic simulation is also given; we will use 'Andorra' as the region of interest. A more detailed, complex example is illustrated in this jupyter notebook (ADD LINK). Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
+The basic flow of a simulation is described below and an overview of the process is illustrated in Figure 3. The instructions to run a basic simulation is also given; we will use 'Andorra' as the region of interest. A more detailed, complex example is illustrated in this jupyter notebook (ADD LINK). Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
 
 <figure>
     <img src="./images/program_workflow.png" alt="Overview of simulation workflow">
-    <figcaption><i>Figure 4. Overview of simulation workflow: These steps are required to run a simulation.</i></figcaption>
+    <figcaption><i>Figure 3. Overview of simulation workflow: These steps are required to run a simulation.</i></figcaption>
 </figure>
 
 
@@ -40,7 +40,8 @@ Before running a simulation, rEpiabm needs to be installed with all dependencies
 
     ```GITHUB_PAT=your_personal_access_token```
 
-  where the above is your real token from github
+  where the above is your real token from github.
+
 5. Restart RStudio
 6. Enter in R terminal:
 
