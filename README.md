@@ -21,7 +21,7 @@ To model an epidemic, contact events are represented by the population spatial s
 ## Running a simulation
 The basic flow of a simulation is described below and an overview of the process is illustrated in Figure 4. The instructions to run a basic simulation is also given; we will use 'Andorra' as the region of interest. A more detailed, complex example is illustrated in this jupyter notebook (ADD LINK). Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
 
-![Figure 4. Overview of simulation workflow: These steps are required to run a simulation.](.images/program_workflow.png)
+![Figure 4. Overview of simulation workflow: These steps are required to run a simulation.](./images/program_workflow.png)
 
 
 ### Step 1: Set up rEpiabm
