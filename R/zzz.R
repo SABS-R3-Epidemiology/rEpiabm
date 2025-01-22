@@ -78,8 +78,7 @@ for package in packages:
 # Install pyEpiabm from GitHub
 subprocess.check_call([
     sys.executable, '-m', 'pip', 'install', '--upgrade',
-    'git+https://github.com/SABS-R3-Epidemiology/epiabm.git@main#egg=
-    pyEpiabm&subdirectory=pyEpiabm'
+    'git+https://github.com/SABS-R3-Epidemiology/epiabm.git@main#egg=pyEpiabm&subdirectory=pyEpiabm'  # nolint: line_length_linter.
 ])
   ")
   # Verify installations
