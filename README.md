@@ -71,7 +71,7 @@ This structure is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiol
 In summary, the spatial structure for a region is generated using EpiGeoPop. This tool exports into a csv file the number of households, places, and individuals for each microcell. It also produces a Population Density map in the ```outputs/countries/<your_country>.pdf```, an example of Andorra shown in Figure 3.
 
 <figure>
-    <img src="./images/Andorra.pdf" alt="Population density map of Andorra">
+    <img src="./images/Andorra.png" alt="Population density map of Andorra">
     <figcaption><i>Figure 3. Example output: Population density map of Andorra.</i></figcaption>
 </figure>
 
@@ -83,6 +83,7 @@ Once the data for your country has been extracted, the simulation can be configu
     <img src="./images/program_workflow.png" alt="Overview of simulation workflow">
     <figcaption><i>Figure 4. Overview of simulation workflow: These steps are required to run a simulation.</i></figcaption>
 </figure>
+
 
 The following parameters are essential and need to be stated by the user to run a simulation:
 
