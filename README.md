@@ -19,12 +19,7 @@ To model an epidemic, contact events are represented by the population spatial s
 </div>
 
 ## Running a simulation
-The basic flow of a simulation is described below and an overview of the process is illustrated in Figure 3. The instructions to run a basic simulation is also given; we will use 'Andorra' as the region of interest. A more detailed, complex example is illustrated in this jupyter notebook (ADD LINK). Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
-
-<figure>
-    <img src="./images/program_workflow.png" alt="Overview of simulation workflow">
-    <figcaption><i>Figure 3. Overview of simulation workflow: These steps are required to run a simulation.</i></figcaption>
-</figure>
+The basic flow of a simulation is described below, a more detailed, complex example is illustrated in this jupyter notebook (ADD LINK). The instructions to run a basic simulation is given and we will use 'Andorra' as the region of interest. Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
 
 
 ### Step 1: Set up rEpiabm
@@ -73,11 +68,22 @@ This structure is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiol
 
 **NB:** At the time of writing, the tool did not extract the data successfully. Please follow the instructions in this jupyter notebook (ADD reference)
 
-In summary, the spatial structure for a region is generated using EpiGeoPop. This tool exports into a csv file the number of households, places, and individuals for each microcell. It also produces a Population Density map in the ```outputs/countries/<your_country>.pdf```, an example of Andorra shown in Figure 4.
+In summary, the spatial structure for a region is generated using EpiGeoPop. This tool exports into a csv file the number of households, places, and individuals for each microcell. It also produces a Population Density map in the ```outputs/countries/<your_country>.pdf```, an example of Andorra shown in Figure 3.
 
-FIGURE 4
+<figure>
+    <img src="./images/Andorra.pdf" alt="Population density map of Andorra">
+    <figcaption><i>Figure 3. Example output: Population density map of Andorra.</i></figcaption>
+</figure>
+
 
 ### Step 3: Configure the simulation
+Once the data for your country has been extracted, the simulation can be configured and run. An overview of the program workflow is illustrated in Figure 4. 
+
+<figure>
+    <img src="./images/program_workflow.png" alt="Overview of simulation workflow">
+    <figcaption><i>Figure 4. Overview of simulation workflow: These steps are required to run a simulation.</i></figcaption>
+</figure>
+
 The following parameters are essential and need to be stated by the user to run a simulation:
 
 * Name of the path to the csv file from EpiGeoPop
