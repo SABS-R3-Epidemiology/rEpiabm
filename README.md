@@ -19,7 +19,7 @@ To model an epidemic, contact events are represented by the population spatial s
 </div>
 
 ## Running a simulation
-The basic flow of a simulation is described below, a more detailed, complex example is illustrated in this [jupyter notebook](https://github.com/SABS-R3-Epidemiology/rEpiabm/walk-through/detailed_example.ipynb) . The instructions to run a basic simulation is given and we will use 'Andorra' as the region of interest. Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
+The basic flow of a simulation is described below, a more detailed, complex example is illustrated in this [jupyter notebook](https://github.com/SABS-R3-Epidemiology/rEpiabm/walk_through/detailed_example.ipynb) . The instructions to run a basic simulation is given and we will use 'Andorra' as the region of interest. Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
 
 
 ### Step 1: Set up rEpiabm
@@ -62,11 +62,11 @@ This structure is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiol
 
 1. Go to [EpiGeoPop](https://github.com/SABS-R3-Epidemiology/EpiGeoPop) repository and follow the instructions to extract a csv file of your required region.
 
-**NB:** The json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals... upto 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the json file as described in the [jupyter notebook](https://github.com/SABS-R3-Epidemiology/rEpiabm/walk-through/detailed_example.ipynb). 
+**NB:** The json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals... upto 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the json file as described in the [jupyter notebook](https://github.com/SABS-R3-Epidemiology/rEpiabm/walk_through/detailed_example.ipynb). 
 
 2. Copy the extracted file to the new folder data/region_name/inputs
 
-**NB:** At the time of writing, the tool did not extract the data successfully. Please follow the instructions in this [jupyter notebook](https://github.com/SABS-R3-Epidemiology/rEpiabm/walk-through/detailed_example.ipynb).
+**NB:** At the time of writing, the tool did not extract the data successfully. Please follow the instructions in this [jupyter notebook](https://github.com/SABS-R3-Epidemiology/rEpiabm/walk_through/detailed_example.ipynb).
 
 In summary, the spatial structure for a region is generated using EpiGeoPop. This tool exports into a csv file the number of households, places, and individuals for each microcell. It also produces a Population Density map in the ```outputs/countries/<your_country>.pdf```, an example of Andorra shown in Figure 3.
 
@@ -103,7 +103,7 @@ The following parameters are essential and need to be stated by the user to run 
     * ```simulation_end_time```: in sim_param list, enter the time for the simulation to run (in days)
     * ```Andorra``` in final line: change to *<your_country>*.
 
- More detailed instructions are available in the [jupyter notebook](https://github.com/SABS-R3-Epidemiology/rEpiabm/walk-through/detailed_example.ipynb) and further optional parameters are described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model)
+ More detailed instructions are available in the [jupyter notebook](https://github.com/SABS-R3-Epidemiology/rEpiabm/walk_through/detailed_example.ipynb) and further optional parameters are described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model)
 
 **Common adjustments:**
 * At the start, infected individuals are distributed across all cells by default, you may want to put them in one cell.
@@ -140,5 +140,5 @@ A simulation produces one csv output file by default, found in data/*<your_count
 
 It also produces a SI<sub>mild</sub>RD plot, which shows the overall progression of each status for the duration of the simulation.
 
-Further optional files are available, details described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) or see [jupyter notebook](https://github.com/SABS-R3-Epidemiology/rEpiabm/walk-through/detailed_example.ipynb) with a detailed illustration here . These data files can be used to produce plots for further analysis.
+Further optional files are available, details described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) or see [jupyter notebook](https://github.com/SABS-R3-Epidemiology/rEpiabm/walk_through/detailed_example.ipynb) with a detailed illustration here . These data files can be used to produce plots for further analysis.
 
