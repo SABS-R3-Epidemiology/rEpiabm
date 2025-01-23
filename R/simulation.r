@@ -1,4 +1,4 @@
-
+source("R/wrapper.R")
 # Example usage:
 run_complete_simulation <- function(output_dir,
                                     output_file = "output.csv",
@@ -8,6 +8,15 @@ run_complete_simulation <- function(output_dir,
                                     initial_infected) {
   # Initialize environment
   pe <- initialize_simulation_env()
+
+  # User defined variables - see README for instructions
+  input_dir <- ""
+  config_parameters <- "data/simple_parameters.json"
+  epigeopop_file <- ""
+  seed <- 42
+  output_dir <- "data/simulation_outputs"
+  simulation_duration <- 60
+  initial_infected <- 10
 
   pe <- configure_parameters(pe, input_dir, config_parameters)
 
@@ -51,17 +60,7 @@ run_complete_simulation <- function(output_dir,
     generation_time_output =  TRUE
   )
 
-  # User defined variables - see README for instructions
-  input_dir <- "./data/Andorra/inputs"
-  config_parameters <- ".data/Andorra/inputs/simple_parameters"
-  epigeopop_file <- "./data/Andorra/inputs/Andorra_microcells.csv"
-  seed <- 42
-  output_dir <- "./data/Andorra/simulation_outputs"
-  simulation_duration <- 60
-  initial_infected <- 10
-
   # Run simulation
-  source(wrapper.R)
   sim <- run_simulation(pe, sim_params, file_params, dem_file_params,
                         inf_history_params, pop_params,
                         epigeopop_file = epigeopop_file, seed,
