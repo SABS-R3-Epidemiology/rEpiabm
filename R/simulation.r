@@ -1,22 +1,18 @@
 source("R/wrapper.R")
 # Example usage:
-run_complete_simulation <- function(output_dir,
+run_complete_simulation <- function(output_dir="data/simulation_outputs",
                                     output_file = "output.csv",
                                     plot_file = "SIR_plot.png",
                                     use_toy_example = TRUE,
-                                    simulation_duration,
-                                    initial_infected) {
+                                    simulation_duration = 60,
+                                    initial_infected = 10) {
   # Initialize environment
   pe <- initialize_simulation_env()
 
   # User defined variables - see README for instructions
   input_dir <- ""
   config_parameters <- "data/simple_parameters.json"
-  epigeopop_file <- ""
   seed <- 42
-  output_dir <- "data/simulation_outputs"
-  simulation_duration <- 60
-  initial_infected <- 10
 
   pe <- configure_parameters(pe, input_dir, config_parameters)
 
@@ -57,14 +53,19 @@ run_complete_simulation <- function(output_dir,
     infectiousness_output = TRUE,
     compress = FALSE,
     secondary_infections_output = TRUE,
-    generation_time_output =  TRUE
+    generation_time_output = TRUE
   )
 
+  # Create population
+  population <- if (use_toy_example) {
+    create_toy_population(pe, pop_params)
+  } else {
+    epigeopop_file <- "data/epigeopop.csv"  # Example path for epigeopop file
+    create_epigeopop_population(pe, epigeopop_file)
+  }
+
   # Run simulation
-  sim <- run_simulation(pe, sim_params, file_params, dem_file_params,
-                        inf_history_params, pop_params,
-                        epigeopop_file = epigeopop_file, seed,
-                        use_toy_example = use_toy_example)
+  sim <- run_simulation(pe, sim_params, file_params, dem_file_params, population, inf_history_params, seed)
 
   # Process data and create plot
   df_long <- process_simulation_data(file.path(output_dir, output_file))

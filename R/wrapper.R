@@ -32,18 +32,9 @@ create_epigeopop_population <- function(pe, epigeopop_file) {
 }
 
 # Wrap python simulation function
-run_simulation <- function(pe, sim_params, file_params, dem_file_params,
-                           inf_history_params, pop_params = NULL,
-                           epigeopop_file = "", seed = 42,
-                           use_toy_example = FALSE) {
+run_simulation <- function(pe, sim_params, file_params, dem_file_params, population, inf_history_params, seed = 42) {
   # Set seed
   pe$routine$Simulation$set_random_seed(seed = as.integer(seed))
-  # Create population or load from file
-  if (epigeopop_file == "") {
-    population <- create_toy_population(pe, pop_params)
-  } else {
-    population <- create_epigeopop_population(pe, epigeopop_file)
-  }
 
   # Create and configure simulation
   sim <- pe$routine$Simulation()
