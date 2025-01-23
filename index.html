@@ -112,11 +112,11 @@
 <ol style="list-style-type: decimal">
 <li>Go to <a href="https://github.com/SABS-R3-Epidemiology/EpiGeoPop" class="external-link">EpiGeoPop</a> repository and follow the instructions to extract a csv file of your required region.</li>
 </ol>
-<p><strong>NB:</strong> The json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals… upto 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the json file as described in the <a href="./walk_through/detailed_example.ipynb">jupyter notebook</a>.</p>
+<p><strong>NB:</strong> The json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals… upto 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the json file as described <a href="./walk_through/detailed_example.ipynb">in this Jupyter notebook</a>.</p>
 <ol start="2" style="list-style-type: decimal">
 <li>Copy the extracted file to the new folder data/region_name/inputs</li>
 </ol>
-<p><strong>NB:</strong> At the time of writing, the tool did not extract the data successfully. Please follow the instructions in this <a href="./walk_through/detailed_example.ipynb">jupyter notebook</a>.</p>
+<p><strong>NB:</strong> At the time of writing, the tool did not extract the data successfully. Please follow the instructions <a href="./walk_through/detailed_example.ipynb">in this Jupyter notebook</a>.</p>
 <p>In summary, the spatial structure for a region is generated using EpiGeoPop. This tool exports into a csv file the number of households, places, and individuals for each microcell. It also produces a Population Density map in the <code>outputs/countries/&lt;your_country&gt;.pdf</code>, an example of Andorra shown in Figure 3.</p>
 <figure><img src="./images/Andorra.png" alt="Population density map of Andorra"><figcaption><i>Figure 3. Example output: Population density map of Andorra.</i>
 </figcaption></figure>
@@ -136,7 +136,7 @@
 <li>Select any output options required</li>
 </ul>
 <p><strong>Instructions:</strong> 1. Open your version of <em>Andorra_parameters.json</em> (copied from <code>Andorra</code> in Step 1 above) and save with <em><your_country></your_country></em>’s name (keep first letter capitalised). 2. Amend the parameter array household_size_distribution to have your countries’ distribution used in step 2. 3. Open <em>andorra_simulation_flow.R</em> and amend: * <code>file_loc</code>: the absolute path to your csv file exported from EpiGeoPop * <code>initial_infected_number</code>: in sim_param list, enter the number of infected individuals at the start of the simulation. * <code>simulation_end_time</code>: in sim_param list, enter the time for the simulation to run (in days) * <code>Andorra</code> in final line: change to <em><your_country></your_country></em>.</p>
-<p>More detailed instructions are available in the <a href="./walk_through/detailed_example.ipynb">jupyter notebook</a> and further optional parameters are described in <a href="https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model" class="external-link">the Wiki</a></p>
+<p>More detailed instructions are available <a href="./walk_through/detailed_example.ipynb">in this Jupyter notebook</a> and further optional parameters are described in <a href="https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model" class="external-link">the Wiki</a></p>
 <p><strong>Common adjustments:</strong> * At the start, infected individuals are distributed across all cells by default, you may want to put them in one cell. * Maximum infection radius: this sets a maximum distance for the infection to be able to spread from cell to cell * Age distribution used is required * Outputs to evaluate simulation (see Step 5: Evaluate Results)</p>
 </div>
 <div class="section level3">
@@ -154,7 +154,7 @@
 </h3>
 <p>A simulation produces one csv output file by default, found in data/<em><your_country></your_country></em>/simulation_outputs. This file contains the number of individuals for each infection status (S, E, I<sub>mild</sub>, etc) for each day.</p>
 <p>It also produces a SI<sub>mild</sub>RD plot, which shows the overall progression of each status for the duration of the simulation.</p>
-<p>Further optional files are available, details described in <a href="https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model" class="external-link">the Wiki</a> or see <a href="./walk_through/detailed_example.ipynb">jupyter notebook</a> with a detailed illustration here . These data files can be used to produce plots for further analysis.</p>
+<p>Further optional files are available, details described in <a href="https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model" class="external-link">the Wiki</a> or see <a href="./walk_through/detailed_example.ipynb">this Jupyter notebook</a> with a detailed illustration here . These data files can be used to produce plots for further analysis.</p>
 </div>
 </div>
 
