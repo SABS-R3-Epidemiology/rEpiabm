@@ -5,7 +5,7 @@ rEpiabm enables users familiar with R to use [Epiabm](https://github.com/SABS-R3
 ## Summary of Epiabm functionality
 
 ### Basic Architecture
-To model an epidemic, contact events are represented by the population spatial structure (see Figure 1.). The transmission of the disease and its progression within host is represented by a compartment model (see Figure 2.). These two architectures are highly configurable; this allows us to study a wide range of simulation scenarios.
+To model an epidemic, contact events occur within the population spatial structure (see Figure 1.). A compartmental model is used for the progression of the disease within-host (see Figure 2.). These two architectures are highly configurable; this allows us to study a wide range of simulation scenarios.
 
 <div style="display: flex; gap: 20px;">
   <div style="flex: 1;">
@@ -19,7 +19,8 @@ To model an epidemic, contact events are represented by the population spatial s
 </div>
 
 ## Running a simulation
-The basic flow of a simulation is described below, a more detailed, complex example is illustrated [in this Jupyter notebook](./walk_through/detailed_example.ipynb). The instructions to run a basic simulation is given and we will use 'Andorra' as the region of interest. Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
+
+The basic flow of a simulation is described below; a more detailed, complex example is illustrated [in this Jupyter notebook](./walk_through/detailed_example.ipynb). We give instructions to run a basic simulation and use 'Andorra' as the region of interest. Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
 
 
 ### Step 1: Set up rEpiabm
@@ -35,10 +36,10 @@ Before running a simulation, rEpiabm needs to be installed with all dependencies
 
     ```GITHUB_PAT=your_personal_access_token```
 
-  where the above is your real token from github.
+  where the above is your real token from Github, and make sure to save the file.
 
 5. Restart RStudio
-6. Enter in R terminal:
+6. Create a new directory for the repository and enter in R terminal (from inside this new directory):
 
   ```
   install.packages("devtools")
