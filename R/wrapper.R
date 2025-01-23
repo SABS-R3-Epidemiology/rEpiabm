@@ -23,6 +23,14 @@ configure_parameters <- function(pe, input_dir, config_parameters) {
   return(pe)
 }
 
+create_toy_population <- function(pe, pop_params) {
+  return(pe$routine$ToyPopulationFactory()$make_pop(pop_params))
+}
+
+create_epigeopop_population <- function(pe, epigeopop_file) {
+  return(pe$routine$FilePopulationFactory()$make_pop_from_file(epigeopop_file))
+}
+
 # Wrap python simulation function
 run_simulation <- function(pe, sim_params, file_params, dem_file_params,
                            inf_history_params, pop_params = NULL,
@@ -32,11 +40,9 @@ run_simulation <- function(pe, sim_params, file_params, dem_file_params,
   pe$routine$Simulation$set_random_seed(seed = as.integer(seed))
   # Create population or load from file
   if (epigeopop_file == "") {
-    population <- pe$routine$ToyPopulationFactory()$
-      make_pop(pop_params)
+    population <- create_toy_population(pe, pop_params)
   } else {
-    population <- pe$routine$FilePopulationFactory()$
-      make_pop_from_file(epigeopop_file)
+    population <- create_epigeopop_population(pe, epigeopop_file)
   }
 
   # Create and configure simulation
