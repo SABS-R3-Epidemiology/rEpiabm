@@ -51,7 +51,7 @@ Before running a simulation, rEpiabm needs to be installed with all dependencies
 
     OR
 
-    b) *A toy simulation where users can specify population parameter values (usually small quantities) to create the Population spatial structure*: If this is the option you require, copy the example 'toy'folder structure within the data folder and name it with your region of interest (include the files as you will need to edit these for your simulation)
+    b) *A toy simulation where users can specify population parameter values (usually small quantities) to create the Population spatial structure*: If this is the option you require, copy the example 'toy' folder structure within the data folder and name it with your region of interest (include the files as you will need to edit these for your simulation)
 
 You are now ready to configure a simulation. 
 
@@ -74,7 +74,7 @@ The structure is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiolo
 
 **NB:** The json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals... upto 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the json file as described [in this Jupyter notebook](./walk_through/detailed_example.ipynb). 
 
-2. Copy the extracted file to the new folder data/region_name/inputs
+2. Copy the extracted file to the new folder data/<your_country>/inputs
 
 **NB:** At the time of writing, the tool did not extract the data successfully. Please follow the instructions [in this Jupyter notebook](./walk_through/detailed_example.ipynb).
 
@@ -84,6 +84,7 @@ In summary, the spatial structure for a region is generated using EpiGeoPop. Thi
     <img src="./images/Andorra.png" alt="Population density map of Andorra">
     <figcaption><i>Figure 3. Example output: Population density map of Andorra.</i></figcaption>
 </figure>
+
 
 **Step 2.2 Using User-defined values** 
 
