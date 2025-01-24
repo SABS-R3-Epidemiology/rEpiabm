@@ -1,6 +1,6 @@
 ADD BADGES
 # rEpiabm
-rEpiabm enables users familiar with R to use [Epiabm](https://github.com/SABS-R3-Epidemiology/epiabm). Epiabm is a simulation tool that models the progress of an epidemic across a specified region of interest within a specific timeframe. It has been developed in python for small-scale implementations and C++ for fast, large-scale simulations. PyEpiabm has a modular design, with many options to configure specific requirements.
+rEpiabm enables users familiar with R to use [Epiabm](https://github.com/SABS-R3-Epidemiology/epiabm). Epiabm is a simulation tool that models the progress of an epidemic across a specified region of interest within a specific timeframe. It has been developed in python (PyEpiabm) for small-scale implementations and C++ (cEpiabm) for fast, large-scale simulations. PyEpiabm has a modular design, with many options to configure specific requirements.
 
 ## Summary of Epiabm functionality
 
@@ -20,7 +20,7 @@ To model an epidemic, contact events occur within the population spatial structu
 
 ## Running a simulation
 
-The basic flow of a simulation is described below; a more detailed, complex example is illustrated [in this Jupyter notebook](./walk_through/detailed_example.ipynb). We give instructions to run a basic simulation and use 'Andorra' as the region of interest. Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
+The basic flow of a simulation is described below; a more detailed, complex example is illustrated [in this Jupyter notebook](./walk_through/detailed_example.ipynb). We give instructions to run a basic simulation and use 'Andorra' as an example of the region of interest. Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
 
 
 ### Step 1: Set up rEpiabm
@@ -45,19 +45,28 @@ Before running a simulation, rEpiabm needs to be installed with all dependencies
   install.packages("devtools")
   devtools::install_github("SABS-R3-Epidemiology/rEpiabm")
   ```
-7. Copy the example 'Andorra' folder structure within the data folder and name it with your region of interest (include the files as you will need to edit these for your simulation).
+7. You now have two different simulation options:
 
-You are now ready to configure a simulation.
+    a) *An Epigeopop based simulation which uses **real** data to create the Population spatial structure*: If this is the option you require, copy the example 'Andorra' folder structure within the data folder and name it with your region of interest (include the files as you will need to edit these for your simulation).
 
+    OR
 
-### Step 2: Use EpiGeoPop to generate the population spatial structure
+    b) *A toy simulation where users can specify population parameter values (usually small quantities) to create the Population spatial structure*: If this is the option you require, copy the example 'toy'folder structure within the data folder and name it with your region of interest (include the files as you will need to edit these for your simulation)
+
+You are now ready to configure a simulation. 
+
+### Step 2: Generate the population spatial structure
 As shown in Figure 1, the region of interest is broken into a spatial structure:
 * *Cells* - largest areas, based on a fixed width
 * *Microcells* - cells are split into microcells which contain smaller areas containing individuals
 * *Households* - quantity per microcell is based on a probabilistic distribution. All individuals are assigned to one household and do not move households during the simulation.
 * *Places* - quantity per microcell is based on a probabilistic distribution. These are spaces where individuals might meet other individuals from different households, a workplace or a public park for example.
 
-This structure is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiology/EpiGeoPop). The user states a region of interest, Oxford or UK for example, and the tool extracts information from [Natural Earth](https://www.naturalearthdata.com/) and [JRC](https://data.jrc.ec.europa.eu/csv), providing a csv file as output. This file contains one line per microcell for each cell, with the number of households, places and individuals to be used in the simulation (the quantity of individuals are extracted from Census data).
+Follow **Step 2.1** instructions for an Epigeopop simulation or **Step 2.2** for a toy simulation.
+
+**Step 2.1 Using EpiGeoPop**
+
+The structure is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiology/EpiGeoPop). The user states a region of interest, Oxford or UK for example, and the tool extracts information from [Natural Earth](https://www.naturalearthdata.com/) and [JRC](https://data.jrc.ec.europa.eu/csv), providing a csv file as output. This file contains one line per microcell for each cell, with the number of households, places and individuals to be used in the simulation (the quantity of individuals are extracted from Census data).
 
 **Instructions:**
 
@@ -76,6 +85,22 @@ In summary, the spatial structure for a region is generated using EpiGeoPop. Thi
     <figcaption><i>Figure 3. Example output: Population density map of Andorra.</i></figcaption>
 </figure>
 
+**Step 2.2 Using User-defined values** 
+
+The user defines population values to generate a toy population spatial structure for the simulation. No region is specified but can be named to distinguish different simulation runs. This option is commonly used to *play* with different configurations of the simulation using small populations.
+
+**Instructions:**
+
+1. Open simulation.R and amend the following parameters (these are the default values):
+  ```
+  population_size = as.integer(100),
+  cell_number = as.integer(2),
+  microcell_number = as.integer(2),
+  household_number = as.integer(5),
+  place_number = as.integer(2)
+  population_seed = as.integer(42)
+  ```
+2. Save simulation.R
 
 ### Step 3: Configure the simulation
 Once the data for your country has been extracted, the simulation can be configured and run. An overview of the program workflow is illustrated in Figure 4. 
