@@ -127,3 +127,62 @@ save_sir_plot <- function(plot, filename, width = 10, height = 6, dpi = 300) {
     dpi = dpi
   )
 }
+
+# Calculate effective reproduction number (Rt)
+calculate_rt <- function(df, window = 7) {
+  df_infected <- df[df$Status == "Infected", ]
+  df_infected$Rt <- c(NA, diff(df_infected$Count) / lag(df_infected$Count))
+  df_infected$Rt <- zoo::rollmean(df_infected$Rt, window, fill = NA)
+  return(df_infected)
+}
+
+# Create Rt plot
+create_rt_plot <- function(df_rt, title = "Effective Reproduction Number (Rt)", display = TRUE) {
+  p <- ggplot(df_rt, aes(x = time, y = Rt)) +
+    geom_line(color = "orange") +
+    theme_minimal() +
+    labs(
+      title = title,
+      x = "Time",
+      y = "Rt"
+    ) +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      panel.grid.minor = element_blank()
+    )
+
+  if (display) {
+    print(p)
+  }
+
+  return(p)
+}
+
+# Calculate serial intervals
+calculate_serial_interval <- function(df) {
+  df_infected <- df[df$Status == "Infected", ]
+  serial_intervals <- diff(df_infected$time)
+  return(data.frame(SerialInterval = serial_intervals))
+}
+
+# Create serial interval plot
+create_serial_interval_plot <- function(df_si, title = "Serial Interval Distribution", display = TRUE) {
+  p <- ggplot(df_si, aes(x = SerialInterval)) +
+    geom_histogram(binwidth = 1, fill = "skyblue", color = "black", alpha = 0.7) +
+    theme_minimal() +
+    labs(
+      title = title,
+      x = "Serial Interval (days)",
+      y = "Frequency"
+    ) +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      panel.grid.minor = element_blank()
+    )
+
+  if (display) {
+    print(p)
+  }
+
+  return(p)
+}

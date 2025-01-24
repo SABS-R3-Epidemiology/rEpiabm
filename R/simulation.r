@@ -1,5 +1,6 @@
 source("R/wrapper.R")
 # Example usage:
+# Run complete simulation
 run_complete_simulation <- function(output_dir="data/simulation_outputs",
                                     output_file = "output.csv",
                                     plot_file = "SIR_plot.png",
@@ -56,13 +57,9 @@ run_complete_simulation <- function(output_dir="data/simulation_outputs",
     generation_time_output = TRUE
   )
 
-  # Create population
-  population <- if (use_toy_example) {
-    create_toy_population(pe, pop_params)
-  } else {
-    epigeopop_file <- "data/epigeopop.csv"  # Example path for epigeopop file
-    create_epigeopop_population(pe, epigeopop_file)
-  }
+  # Select population creation function
+  population_creation_function <- if (use_toy_example) create_toy_population else create_epigeopop_population
+  population <- population_creation_function(pe, if (use_toy_example) pop_params else "data/epigeopop.csv")
 
   # Run simulation
   sim <- run_simulation(pe, sim_params, file_params, dem_file_params, population, inf_history_params, seed)
