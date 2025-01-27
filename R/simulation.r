@@ -3,14 +3,16 @@ source("R/wrapper.R")
 # Run complete simulation
 run_complete_simulation <- function(output_dir="data/simulation_outputs",
                                     output_file = "output.csv",
-                                    plot_file = "SIR_plot.png",
+                                    sir_plot_file = "SIR_plot.png",
+                                    rt_plot_file = "Rt_plot.png",
+                                    si_plot_file = "SerialInterval_plot.png",
                                     use_toy_example = TRUE,
                                     simulation_duration = 60,
                                     initial_infected = 10) {
   # Initialize environment
   pe <- initialize_simulation_env()
 
-  # User defined variables - see README for instructions
+  # User-defined variables
   input_dir <- ""
   config_parameters <- "data/simple_parameters.json"
   seed <- 42
@@ -54,7 +56,8 @@ run_complete_simulation <- function(output_dir="data/simulation_outputs",
     infectiousness_output = TRUE,
     compress = FALSE,
     secondary_infections_output = TRUE,
-    generation_time_output = TRUE
+    generation_time_output = TRUE,
+    serial_interval_output = TRUE
   )
 
   # Select population creation function
@@ -64,14 +67,25 @@ run_complete_simulation <- function(output_dir="data/simulation_outputs",
   # Run simulation
   sim <- run_simulation(pe, sim_params, file_params, dem_file_params, population, inf_history_params, seed)
 
-  # Process data and create plot
+  # Process data
   df_long <- process_simulation_data(file.path(output_dir, output_file))
-  plot <- create_sir_plot(df_long)
 
-  # Save plot
-  save_sir_plot(plot, file.path(output_dir, plot_file))
+  print(colnames(df_long))
+  print(df_long)
 
-  return(list(simulation = sim, data = df_long, plot = plot))
+  # Generate SIR plot
+  sir_plot <- create_sir_plot(df_long, display = TRUE)
+  save_sir_plot(sir_plot, file.path(output_dir, sir_plot_file))
+
+
+  plot_rt_curves("simulation_outputs/secondary_infections.csv")
+
+  # Generate Serial Interval plot
+  df_si <- calculate_serial_interval(df_long)
+  si_plot <- create_serial_interval_plot(df_si, display = TRUE)
+  save_sir_plot(si_plot, file.path(output_dir, si_plot_file))
+
+  return(list(simulation = sim, data = df_long, sir_plot = sir_plot, rt_plot = "", si_plot = ""))
 }
 
 results <- run_complete_simulation()

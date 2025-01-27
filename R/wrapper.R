@@ -128,34 +128,56 @@ save_sir_plot <- function(plot, filename, width = 10, height = 6, dpi = 300) {
   )
 }
 
-# Calculate effective reproduction number (Rt)
-calculate_rt <- function(df, window = 7) {
-  df_infected <- df[df$Status == "Infected", ]
-  df_infected$Rt <- c(NA, diff(df_infected$Count) / lag(df_infected$Count))
-  df_infected$Rt <- zoo::rollmean(df_infected$Rt, window, fill = NA)
-  return(df_infected)
+save_sir_plot <- function(plot, filename, width = 10, height = 6, dpi = 300) {
+  ggsave(
+    filename = here(filename),
+    plot = plot,
+    width = width,
+    height = height,
+    dpi = dpi
+  )
 }
 
-# Create Rt plot
-create_rt_plot <- function(df_rt, title = "Effective Reproduction Number (Rt)", display = TRUE) {
-  p <- ggplot(df_rt, aes(x = time, y = Rt)) +
-    geom_line(color = "orange") +
-    theme_minimal() +
-    labs(
-      title = title,
-      x = "Time",
-      y = "Rt"
-    ) +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      panel.grid.minor = element_blank()
-    )
-
-  if (display) {
-    print(p)
+plot_rt_curves <- function(file_path) {
+  # Check if file exists
+  if (!file.exists(file_path)) {
+    stop("The file does not exist. Please provide a valid file path.")
   }
 
-  return(p)
+  # Read the CSV file
+  data <- tryCatch({
+    read.csv(file_path)
+  }, error = function(e) {
+    stop("Error reading the file. Ensure it's a valid CSV.")
+  })
+
+  # Filter for "time" and "R_t" columns
+  if (!all(c("time", "R_t") %in% colnames(data))) {
+    stop("The CSV file must contain 'time' and 'R_t' columns.")
+  }
+  data <- data[, c("time", "R_t")]
+
+  # Remove rows with NaN values
+  data <- na.omit(data)
+
+  # Create the ggplot
+  gg <- ggplot(data, aes(x = time, y = R_t)) +
+    geom_line(color = "blue", size = 1) +
+    labs(
+      title = "Reproduction Number (R_t) Over Time",
+      x = "Time",
+      y = "R_t"
+    ) +
+    theme_minimal()
+
+  # Print the plot
+  print(gg)
+  print("R_t plot generated successfully.")
+
+  # Save the plot
+  save_sir_plot(gg, "simulation_outputs/rt_curve.png")
+
+  return(gg)
 }
 
 # Calculate serial intervals
