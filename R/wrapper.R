@@ -180,16 +180,19 @@ plot_rt_curves <- function(file_path) {
   return(gg)
 }
 
-# Calculate serial intervals
-calculate_serial_interval <- function(df) {
-  df_infected <- df[df$Status == "Infected", ]
-  serial_intervals <- diff(df_infected$time)
-  return(data.frame(SerialInterval = serial_intervals))
-}
-
 # Create serial interval plot
-create_serial_interval_plot <- function(df_si, title = "Serial Interval Distribution", display = TRUE) {
-  p <- ggplot(df_si, aes(x = SerialInterval)) +
+create_serial_interval_plot <- function(file_path, title = "Serial Interval Distribution", display = TRUE) {
+  # Read the CSV file and exclude the first row
+  data <- read.csv(file_path, header = TRUE)[-1, ]
+  
+  # Convert the data to a 1D array
+  data_1d <- as.numeric(unlist(data))
+  
+  # Remove NaNs
+  data_1d <- na.omit(data_1d)
+  
+  # Create the histogram plot
+  p <- ggplot(data.frame(Value = data_1d), aes(x = Value)) +
     geom_histogram(binwidth = 1, fill = "skyblue", color = "black", alpha = 0.7) +
     theme_minimal() +
     labs(
