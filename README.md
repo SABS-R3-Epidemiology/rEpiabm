@@ -177,7 +177,7 @@ An overview of the program workflow is illustrated in Figure 4.
 <figure>
     <img src="./images/program_workflow.png" alt="Overview of simulation workflow">
     <figcaption><i>Figure 4. Overview of simulation workflow: These steps are required to run a simulation.</i></figcaption>
-</figure><br>
+</figure><br><br>
 
 **Instructions:**
 1. After saving the configured file, either `simulation_epigeopop.R` or `simulation_toy.R`, run this code!
