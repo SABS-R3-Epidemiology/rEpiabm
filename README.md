@@ -57,7 +57,7 @@ As shown in Figure 1, the region of interest is broken into a spatial structure:
 * *Places* - quantity per microcell is based on a probabilistic distribution. These are spaces where individuals might meet other individuals from different households, a workplace or a public park for example.
 
 > [!IMPORTANT]  
-> Follow **Step 2.1(#step-21)** instructions for an Epigeopop simulation or **Step 2.2(#Step-22)** for a toy simulation.
+> Follow **[Step 2.1](#Step-21)** instructions for an Epigeopop simulation or **[Step 2.2](#Step-22)** for a toy simulation.
 
 **Step 2.1 Using EpiGeoPop**
 
@@ -75,12 +75,12 @@ The structure is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiolo
 > [!CAUTION]  
 > At the time of writing, the tool did not extract the data successfully. Please follow the instructions [in this Jupyter notebook](./walk_through/detailed_example.ipynb).
 
-In summary, the spatial structure for a region is generated using EpiGeoPop. This tool exports into a csv file the number of households, places, and individuals for each microcell. It also produces a Population Density map in `outputs/countries/<your_country>.pdf`, an example of Andorra shown in Figure 3.
+In summary, the spatial structure for a region is generated using EpiGeoPop. This tool exports into a csv file the number of households, places, and individuals for each microcell. It also produces a Population Density map in `outputs/countries/<your_country>.pdf`, the example of Andorra is shown in Figure 3.
 
 <figure>
     <img src="./images/Andorra.png" alt="Population density map of Andorra">
     <figcaption><i>Figure 3. Example output: Population density map of Andorra.</i></figcaption>
-</figure>
+</figure><br>
 
 
 **Step 2.2 Using User-defined values** 
