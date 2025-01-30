@@ -79,7 +79,7 @@ run_complete_simulation <- function(output_dir="data/toy/simulation_outputs",
 
 
   # Generate Rt plot
-  rt_plot <- plot_rt_curves(file.path(output_dir, "secondary_infections.csv"), display =TRUE,  location = file.path(output_dir, rt_plot_file))
+  rt_plot <- plot_rt_curves(file.path(output_dir, "secondary_infections.csv"), location = file.path(output_dir, rt_plot_file))
 
   # Generate Serial Interval plot
   si_plot <- create_serial_interval_plot(file.path(output_dir, "serial_intervals.csv"), display = TRUE, location = file.path(output_dir, si_plot_file))
