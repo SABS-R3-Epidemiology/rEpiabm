@@ -124,7 +124,7 @@ At the time of writing, the tool did not extract the data successfully. Please f
 </blockquote>
 <p>In summary, the spatial structure for a region is generated using EpiGeoPop. This tool exports into a csv file the number of households, places, and individuals for each microcell. It also produces a Population Density map in <code>outputs/countries/&lt;your_country&gt;.pdf</code>, the example of Andorra is shown in Figure 3.</p>
 <figure><img src="./images/Andorra.png" alt="Population density map of Andorra"><figcaption><i>Figure 3. Example output: Population density map of Andorra.</i>
-</figcaption></figure><p><br></p>
+</figcaption></figure><p><br><br></p>
 <p><strong>2.2 Using User-defined values</strong></p>
 <p>The user defines population values to generate a toy population spatial structure for the simulation. No region is specified but can be named to distinguish different simulation runs. This option is commonly used to <em>play</em> with different configurations of the simulation using small populations.</p>
 <p><strong>Instructions:</strong></p>
@@ -183,7 +183,7 @@ There are optional modules such as recording demographics, which are described i
 <p>Individual’s location and infection status is updated each day: * UpdatePlaceSweep - Account for movement of individuals by refreshing their ‘place’ assignments * Check each infected individual to see if they infect others: * HouseholdSweep - At a household * PlaceSweep - At a place * SpatialSweep - Between cells * QueueSweep - Any successful infections will update the newly infected person’s status from S (Susceptible) to E (Exposed). * HostProgressionSweep - Individual’s Infection progress is updated using the compartmental model</p>
 <p>An overview of the program workflow is illustrated in Figure 4.</p>
 <figure><img src="./images/program_workflow.png" alt="Overview of simulation workflow"><figcaption><i>Figure 4. Overview of simulation workflow: These steps are required to run a simulation.</i>
-</figcaption></figure><p> </p>
+</figcaption></figure><p><br></p>
 <p><strong>Instructions:</strong> 1. After saving the configured file, either <code>simulation_epigeopop.R</code> or <code>simulation_toy.R</code>, run this code!</p>
 </div>
 <div class="section level3">
