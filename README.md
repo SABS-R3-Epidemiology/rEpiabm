@@ -158,17 +158,8 @@ Once configured, the simulation takes the generated population and performs the 
 * InitialisePlaceSweep - Assign individuals to places
 * InitialInfectedSweep - Assign which individuals are initially infected
 
-An overview of the program workflow is illustrated in Figure 4. 
-
-<figure>
-    <img src="./images/program_workflow.png" alt="Overview of simulation workflow">
-    <figcaption><i>Figure 4. Overview of simulation workflow: These steps are required to run a simulation.</i></figcaption>
-</figure>
-&nbsp;
-
 > [!NOTE]  
 > There are optional modules such as recording demographics, which are described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model)
-
 
 **Simulation sweeps:**
 
@@ -181,13 +172,24 @@ Individual’s location and infection status is updated each day:
 * QueueSweep - Any successful infections will update the newly infected person’s status from S (Susceptible) to E (Exposed).
 * HostProgressionSweep - Individual’s Infection progress is updated using the compartmental model
 
+An overview of the program workflow is illustrated in Figure 4. 
+
+<figure>
+    <img src="./images/program_workflow.png" alt="Overview of simulation workflow">
+    <figcaption><i>Figure 4. Overview of simulation workflow: These steps are required to run a simulation.</i></figcaption>
+</figure>
+&nbsp;
+
 **Instructions:**
 1. After saving the configured file, either `simulation_epigeopop.R` or `simulation_toy.R`, run this code!
 
 ### Step 5: Evaluate results
 A simulation produces one csv output file by default, found in the directory `data/<your_country>/simulation_outputs`. This file contains the number of individuals for each infection status (S, E, I<sub>mild</sub>, etc) for each day.
 
-It also produces a SI<sub>mild</sub>RD plot, which shows the overall progression of each status for the duration of the simulation.
+It also produces three common plots:
+- a SI<sub>mild</sub>RD plot, which shows the overall progression of each status for the duration of the simulation.
+- a Reproduction number, R<sub>t</sub>, plot
+- a Serial-Interval distribution plot
 
 Further optional files are available, details described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model). These data files can be used to produce plots for further analysis.
 
