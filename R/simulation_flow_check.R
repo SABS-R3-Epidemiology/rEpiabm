@@ -21,7 +21,7 @@ pe <- import("pyEpiabm", delay_load = TRUE)
 base_dir <- here()
 
 # Set config file for Parameters
-pe$Parameters$set_file(here("data", "simple_parameters.json"))
+pe$Parameters$set_file(here("data/Andorra", "andorra_parameters.json"))
 
 # Method to set the seed at the start of the simulation, for reproducibility
 pe$routine$Simulation$set_random_seed(seed = as.integer(42))
