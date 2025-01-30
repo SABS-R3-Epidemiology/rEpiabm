@@ -93,7 +93,7 @@
 <span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a></span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="fl">5.2</span> <span class="sc">*</span>A toy simulation<span class="sc">*</span></span>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>Users can specify population parameter <span class="fu">values</span> (usually small quantities) to create the Population spatial structure<span class="sc">*</span><span class="er">:</span> Copy the example <span class="st">`</span><span class="at">toy</span><span class="st">`</span> folder structure within the data folder and name it with your region of interest. Include the <span class="st">`</span><span class="at">.json</span><span class="st">`</span> file as you will need to edit this later <span class="cf">for</span> your simulation.<span class="sc">&lt;</span>br<span class="sc">&gt;</span><span class="er">&lt;</span>br<span class="sc">&gt;</span></span></code></pre></div>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>Users can specify population parameter <span class="fu">values</span> (usually small quantities) to create the Population spatial structure<span class="sc">*</span><span class="er">:</span> Copy the example <span class="st">`</span><span class="at">toy</span><span class="st">`</span> folder structure within the data folder and name it with your region of interest. Include the <span class="st">`</span><span class="at">.json</span><span class="st">`</span> file as you will need to edit this later <span class="cf">for</span> your simulation.</span></code></pre></div>
 <p>You are now ready to generate or configure the population for your simulation.</p>
 </div>
 <div class="section level3">
@@ -102,7 +102,7 @@
 <p>As shown in Figure 1, the region of interest is broken into a spatial structure: * <em>Cells</em> - largest areas, based on a fixed width * <em>Microcells</em> - cells are split into microcells which contain smaller areas containing individuals * <em>Households</em> - quantity per microcell is based on a probabilistic distribution. All individuals are assigned to one household and do not move households during the simulation. * <em>Places</em> - quantity per microcell is based on a probabilistic distribution. These are spaces where individuals might meet other individuals from different households, a workplace or a public park for example.</p>
 <blockquote>
 <p>[!IMPORTANT]<br>
-Follow <strong>Step 2.1</strong> instructions for an Epigeopop simulation or <strong>Step 2.2</strong> for a toy simulation.</p>
+Follow <strong>Step 2.1(#step-21)</strong> instructions for an Epigeopop simulation or <strong>Step 2.2(#Step-22)</strong> for a toy simulation.</p>
 </blockquote>
 <p><strong>Step 2.1 Using EpiGeoPop</strong></p>
 <p>The structure is created using <a href="https://github.com/SABS-R3-Epidemiology/EpiGeoPop" class="external-link">EpiGeoPop</a>. The user states a region of interest, Oxford or UK for example, and the tool extracts information from <a href="https://www.naturalearthdata.com/" class="external-link">Natural Earth</a> and <a href="https://data.jrc.ec.europa.eu/csv" class="external-link">JRC</a>, providing a csv file as output. This file contains one line per microcell for each cell, with the number of households, places and individuals to be used in the simulation (the quantity of individuals are extracted from Census data).</p>
@@ -110,13 +110,19 @@ Follow <strong>Step 2.1</strong> instructions for an Epigeopop simulation or <st
 <ol style="list-style-type: decimal">
 <li>Go to <a href="https://github.com/SABS-R3-Epidemiology/EpiGeoPop" class="external-link">EpiGeoPop</a> repository and follow the instructions to extract a csv file of your required region.</li>
 </ol>
-<p><strong>NB:</strong> The json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals… upto 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the json file as described <a href="./walk_through/detailed_example.ipynb">in this Jupyter notebook</a>.</p>
+<blockquote>
+<p>[!NOTE]<br>
+The json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals… upto 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the json file as described <a href="./walk_through/detailed_example.ipynb">in this Jupyter notebook</a>.</p>
+</blockquote>
 <ol start="2" style="list-style-type: decimal">
-<li>Copy the extracted file to the new folder data/<your_country>/inputs</your_country>
+<li>Copy the extracted file to the new folder <code>data/&lt;your_country&gt;/inputs</code>
 </li>
 </ol>
-<p><strong>NB:</strong> At the time of writing, the tool did not extract the data successfully. Please follow the instructions <a href="./walk_through/detailed_example.ipynb">in this Jupyter notebook</a>.</p>
-<p>In summary, the spatial structure for a region is generated using EpiGeoPop. This tool exports into a csv file the number of households, places, and individuals for each microcell. It also produces a Population Density map in the <code>outputs/countries/&lt;your_country&gt;.pdf</code>, an example of Andorra shown in Figure 3.</p>
+<blockquote>
+<p>[!CAUTION]<br>
+At the time of writing, the tool did not extract the data successfully. Please follow the instructions <a href="./walk_through/detailed_example.ipynb">in this Jupyter notebook</a>.</p>
+</blockquote>
+<p>In summary, the spatial structure for a region is generated using EpiGeoPop. This tool exports into a csv file the number of households, places, and individuals for each microcell. It also produces a Population Density map in <code>outputs/countries/&lt;your_country&gt;.pdf</code>, an example of Andorra shown in Figure 3.</p>
 <figure><img src="./images/Andorra.png" alt="Population density map of Andorra"><figcaption><i>Figure 3. Example output: Population density map of Andorra.</i>
 </figcaption></figure><p><strong>Step 2.2 Using User-defined values</strong></p>
 <p>The user defines population values to generate a toy population spatial structure for the simulation. No region is specified but can be named to distinguish different simulation runs. This option is commonly used to <em>play</em> with different configurations of the simulation using small populations.</p>
