@@ -68,7 +68,7 @@ The structure is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiolo
 1. Go to [EpiGeoPop](https://github.com/SABS-R3-Epidemiology/EpiGeoPop) repository and follow the instructions to extract a csv file of your required region.
 
 > [!NOTE]  
-> The json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals... upto 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the json file as described [in this Jupyter notebook](./walk_through/detailed_example.ipynb). 
+> The .json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals... up to 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the .json file as described [in this Jupyter notebook](./walk_through/detailed_example.ipynb). 
 
 2. Copy the extracted file to the new folder `data/<your_country>/inputs`
 
