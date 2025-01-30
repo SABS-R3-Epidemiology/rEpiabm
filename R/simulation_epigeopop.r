@@ -1,7 +1,7 @@
 source("R/wrapper.R")
 # Example usage:
 # Run complete simulation
-run_complete_simulation <- function(output_dir="data/simulation_outputs",
+run_complete_simulation <- function(output_dir="data/Andorra/simulation_outputs",
                                     output_file = "output.csv",
                                     sir_plot_file = "SIR_plot.png",
                                     rt_plot_file = "Rt_plot.png",
