@@ -20,7 +20,7 @@ To model an epidemic, contact events occur within the population spatial structu
 
 ## Running a simulation
 
-The basic flow of a simulation is described below; a more detailed, complex example is illustrated [in this Jupyter notebook](./walk_through/detailed_example.ipynb). We give instructions to run a basic simulation for both a toy population and a population extracted by [EpiGeoPop](https://github.com/SABS-R3-Epidemiology/EpiGeoPop), using 'Andorra' as an example of the region of interest. Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
+The basic flow of a simulation is described below. More detailed, complex examples are illustrated [in this Jupyter notebook](./walk_through/epigeopop_example.ipynb) using Epigeopop to extract the data and [in this Jupyter notebook](./walk_through/toy_example.ipynb) for a toy population to experiment with. We give instructions to run a basic simulation for both a toy population and a population extracted by [EpiGeoPop](https://github.com/SABS-R3-Epidemiology/EpiGeoPop), using 'Andorra' as an example of the region of interest. Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
 
 
 ### Step 1: Set up rEpiabm
@@ -57,9 +57,9 @@ As shown in Figure 1, the region of interest is broken into a spatial structure:
 * *Places* - quantity per microcell is based on a probabilistic distribution. These are spaces where individuals might meet other individuals from different households, a workplace or a public park for example.
 
 > [!IMPORTANT]  
-> Follow **[Step 2.1](#Step-21)** instructions for an Epigeopop simulation or **[Step 2.2](#Step-22)** for a toy simulation.
+> Follow **2.1 Using EpiGeoPop** instructions for extracting a population using Epigeopop or **2.2 Using User-defined values** for a toy population.
 
-**Step 2.1 Using EpiGeoPop**
+**2.1 Using EpiGeoPop**
 
 The structure is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiology/EpiGeoPop). The user states a region of interest, Oxford or UK for example, and the tool extracts information from [Natural Earth](https://www.naturalearthdata.com/) and [JRC](https://data.jrc.ec.europa.eu/csv), providing a csv file as output. This file contains one line per microcell for each cell, with the number of households, places and individuals to be used in the simulation (the quantity of individuals are extracted from Census data).
 
@@ -73,7 +73,7 @@ The structure is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiolo
 2. Copy the extracted file to the new folder `data/<your_country>/inputs`
 
 > [!CAUTION]  
-> At the time of writing, the tool did not extract the data successfully. Please follow the instructions [in this Jupyter notebook](./walk_through/detailed_example.ipynb).
+> At the time of writing, the tool did not extract the data successfully. Please follow the instructions [in this Jupyter notebook](./walk_through/epigeopop_example.ipynb).
 
 In summary, the spatial structure for a region is generated using EpiGeoPop. This tool exports into a csv file the number of households, places, and individuals for each microcell. It also produces a Population Density map in `outputs/countries/<your_country>.pdf`, the example of Andorra is shown in Figure 3.
 
@@ -83,7 +83,7 @@ In summary, the spatial structure for a region is generated using EpiGeoPop. Thi
 </figure><br>
 
 
-**Step 2.2 Using User-defined values** 
+**2.2 Using User-defined values** 
 
 The user defines population values to generate a toy population spatial structure for the simulation. No region is specified but can be named to distinguish different simulation runs. This option is commonly used to *play* with different configurations of the simulation using small populations.
 
@@ -100,34 +100,49 @@ The user defines population values to generate a toy population spatial structur
   ```
 2. Save simulation.R
 
-### Step 3: Configure the simulation
-Once the data for your country has been extracted, the simulation can be configured and run. An overview of the program workflow is illustrated in Figure 4. 
+> [!NOTE]  
+> Please see more detailed instructions [in this Jupyter notebook](./walk_through/toy_example.ipynb).
 
-<figure>
-    <img src="./images/program_workflow.png" alt="Overview of simulation workflow">
-    <figcaption><i>Figure 4. Overview of simulation workflow: These steps are required to run a simulation.</i></figcaption>
-</figure>
-&nbsp;
+### Step 3: Configure the simulation
+
+Once the data for your region has either been extracted or configured using user-defined values, the simulation can be configured. Again, follow **3.1 Using Epigeopop population** to configure other simulation paramters for your region OR follow **3.2 Using a toy population**.
+
+**3.1 Using Epigeopop population**
 
 The following parameters are essential and need to be stated by the user to run a simulation:
 
 * Name of the path to the csv file from EpiGeoPop
-* Number of infected individuals (Imild): enter the number of infected individuals at the start of the simulation.
+* Number of infected individuals (I<sub>mild</sub>: see Figure 2.): enter the number of infected individuals at the start of the simulation.
 * Proportion of households with 1 individual, 2 individuals, 3 individuals... upto 10 individuals. This information is usually found using census data (or equivalent) for your country.
-* Time for the simulation to run (in days)
+* Duration of the simulation (in days)
 * Select any output options required
 
 **Instructions:**
-1. Open your version of *Andorra_parameters.json*
- (copied from ```Andorra``` in Step 1 above) and save with *<your_country>*'s name (keep first letter capitalised).
-2. Amend the parameter array household_size_distribution to have your countries' distribution used in step 2. 
- 3. Open `simulation_epigeopop.R` and amend:
-    * `input_dir`: the absolute path to your csv file exported from EpiGeoPop
-    * `initial_infected`: enter the number of infected individuals at the start of the simulation.
-    * ``: enter the time for the simulation to run (in days)
-    * ```Andorra``` in final line: change to *<your_country>*.
+1. Open `Andorra_parameters.json` (copied from `Andorra` in Step 1 above) and save with `<your_country>'s` name (keep first letter capitalised).
+2. Amend the parameter array household_size_distribution to have your countries' distribution 
+> [!WARNING]  
+> Make sure these match the values used to extract your population data in Step 2. 
+3. Open `simulation_epigeopop.R` and amend:
+  * `input_dir`: the absolute path to your csv file exported from EpiGeoPop
+  * `initial_infected`: enter the number of infected individuals at the start of the simulation.
+  * `duration`: enter the time for the simulation to run (in days)
+  * `Andorra` in final line: change to `<your_country>`.
 
- More detailed instructions are available [in this Jupyter notebook](./walk_through/detailed_example.ipynb) and further optional parameters are described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model)
+ More detailed instructions are available [in this Jupyter notebook](./walk_through/epigeopop_example.ipynb) and further optional parameters are described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model)
+
+**3.2 Using a toy population**
+The following parameters are essential and need to be stated by the user to run a simulation:
+
+* Number of infected individuals (I<sub>mild</sub>: see Figure 2.): enter the number of infected individuals at the start of the simulation.
+* Duration of the simulation (in days)
+
+**Instructions:**
+1. Open `simulation_toy.R` and amend:
+  * `initial_infected`: enter the number of infected individuals at the start of the simulation.
+  * `duration`: enter the time for the simulation to run (in days)
+
+ More detailed instructions are available [in this Jupyter notebook](./walk_through/toy_example.ipynb) and further optional parameters are described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model)
+
 
 **Common adjustments:**
 * At the start, infected individuals are distributed across all cells by default, you may want to put them in one cell.
@@ -143,7 +158,17 @@ Once configured, the simulation takes the generated population and performs the 
 * InitialisePlaceSweep - Assign individuals to places
 * InitialInfectedSweep - Assign which individuals are initially infected
 
-There are optional modules such as recording demographics, which are described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model)
+An overview of the program workflow is illustrated in Figure 4. 
+
+<figure>
+    <img src="./images/program_workflow.png" alt="Overview of simulation workflow">
+    <figcaption><i>Figure 4. Overview of simulation workflow: These steps are required to run a simulation.</i></figcaption>
+</figure>
+&nbsp;
+
+> [!NOTE]  
+> There are optional modules such as recording demographics, which are described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model)
+
 
 **Simulation sweeps:**
 
@@ -164,5 +189,5 @@ A simulation produces one csv output file by default, found in the directory `da
 
 It also produces a SI<sub>mild</sub>RD plot, which shows the overall progression of each status for the duration of the simulation.
 
-Further optional files are available, details described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) or see [this Jupyter notebook](./walk_through/detailed_example.ipynb) with a detailed illustration here . These data files can be used to produce plots for further analysis.
+Further optional files are available, details described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model). These data files can be used to produce plots for further analysis.
 
