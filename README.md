@@ -187,8 +187,8 @@ A simulation produces one csv output file by default, found in the directory `da
 
 It also produces three common plots:
 - a SI<sub>mild</sub>RD plot, which shows the overall progression of each status for the duration of the simulation.
-- a Reproduction number, R<sub>t</sub>, plot
-- a Serial-Interval distribution plot
+- a Reproduction number, R<sub>t</sub>, plot, which shows the trajectory of the recorded case reproduction number for the duration of the simulation.
+- a Serial-Interval distribution plot, an approximation of the effective serial-interval distribution of the model population.
 
 Further optional files are available, details described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model). These data files can be used to produce plots for further analysis.
 
