@@ -119,7 +119,7 @@ The following parameters are essential and need to be stated by the user to run 
 
 **Instructions:**
 1. Open `Andorra_parameters.json` (copied from `Andorra` in Step 1 above) and save with `<your_country>'s` name (keep first letter capitalised).
-2. Amend the parameter array household_size_distribution to have your countries' distribution 
+2. Amend the parameter array `household_size_distribution` to have your countries' distribution of households 
 > [!WARNING]  
 > Make sure these match the values used to extract your population data in Step 2. 
 3. Open `simulation_epigeopop.R` and amend:
