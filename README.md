@@ -45,7 +45,7 @@ Before running a simulation, rEpiabm needs to be installed with all dependencies
 
     5.2 *A toy simulation*
 
-    Users can specify population parameter values (usually small quantities) to create the Population spatial structure*: Copy the example `toy` folder structure within the data folder and name it with your region of interest. Include the `.json` file as you will need to edit this later for your simulation.<br><br>
+    Users can specify population parameter values (usually small quantities) to create the Population spatial structure*: Copy the example `toy` folder structure within the data folder and name it with your region of interest. Include the `.json` file as you will need to edit this later for your simulation.
 
 You are now ready to generate or configure the population for your simulation. 
 
@@ -57,8 +57,7 @@ As shown in Figure 1, the region of interest is broken into a spatial structure:
 * *Places* - quantity per microcell is based on a probabilistic distribution. These are spaces where individuals might meet other individuals from different households, a workplace or a public park for example.
 
 > [!IMPORTANT]  
-> Follow **Step 2.1** instructions for an Epigeopop simulation or **Step 2.2** for a toy simulation.
-
+> Follow **Step 2.1(#step-21)** instructions for an Epigeopop simulation or **Step 2.2(#Step-22)** for a toy simulation.
 
 **Step 2.1 Using EpiGeoPop**
 
@@ -68,13 +67,15 @@ The structure is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiolo
 
 1. Go to [EpiGeoPop](https://github.com/SABS-R3-Epidemiology/EpiGeoPop) repository and follow the instructions to extract a csv file of your required region.
 
-**NB:** The json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals... upto 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the json file as described [in this Jupyter notebook](./walk_through/detailed_example.ipynb). 
+> [!NOTE]  
+> The json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals... upto 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the json file as described [in this Jupyter notebook](./walk_through/detailed_example.ipynb). 
 
-2. Copy the extracted file to the new folder data/<your_country>/inputs
+2. Copy the extracted file to the new folder `data/<your_country>/inputs`
 
-**NB:** At the time of writing, the tool did not extract the data successfully. Please follow the instructions [in this Jupyter notebook](./walk_through/detailed_example.ipynb).
+> [!CAUTION]  
+> At the time of writing, the tool did not extract the data successfully. Please follow the instructions [in this Jupyter notebook](./walk_through/detailed_example.ipynb).
 
-In summary, the spatial structure for a region is generated using EpiGeoPop. This tool exports into a csv file the number of households, places, and individuals for each microcell. It also produces a Population Density map in the ```outputs/countries/<your_country>.pdf```, an example of Andorra shown in Figure 3.
+In summary, the spatial structure for a region is generated using EpiGeoPop. This tool exports into a csv file the number of households, places, and individuals for each microcell. It also produces a Population Density map in `outputs/countries/<your_country>.pdf`, an example of Andorra shown in Figure 3.
 
 <figure>
     <img src="./images/Andorra.png" alt="Population density map of Andorra">
