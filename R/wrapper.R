@@ -153,15 +153,6 @@ create_sir_plot <- function(df_long, title = "SIR Model Flow", display = TRUE) {
 }
 
 # Save plot
-save_sir_plot <- function(plot, filename, width = 10, height = 6, dpi = 300) {
-  ggsave(
-    filename = here(filename),
-    plot = plot,
-    width = width,
-    height = height,
-    dpi = dpi
-  )
-}
 
 save_sir_plot <- function(plot, filename, width = 10, height = 6, dpi = 300) {
   ggsave(
@@ -173,7 +164,7 @@ save_sir_plot <- function(plot, filename, width = 10, height = 6, dpi = 300) {
   )
 }
 
-plot_rt_curves <- function(file_path) {
+plot_rt_curves <- function(file_path, location) {
   # Check if file exists
   if (!file.exists(file_path)) {
     stop("The file does not exist. Please provide a valid file path.")
@@ -216,7 +207,7 @@ plot_rt_curves <- function(file_path) {
 }
 
 # Create serial interval plot
-create_serial_interval_plot <- function(file_path, title = "Serial Interval Distribution", display = TRUE) {
+create_serial_interval_plot <- function(file_path, title = "Serial Interval Distribution", display = TRUE, location) {
   # Read the CSV file and exclude the first row
   data <- read.csv(file_path, header = TRUE)[-1, ]
   
@@ -245,7 +236,7 @@ create_serial_interval_plot <- function(file_path, title = "Serial Interval Dist
   }
 
   # Save the plot
-  save_sir_plot(p, "data/simulation_outputs/serial_interval.png")
+  save_sir_plot(p, location)
 
   return(p)
 }

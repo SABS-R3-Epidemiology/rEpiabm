@@ -75,12 +75,13 @@ run_complete_simulation <- function(output_dir="data/Andorra/simulation_outputs"
   sir_plot <- create_sir_plot(df_long, display = TRUE)
   save_sir_plot(sir_plot, file.path(output_dir, sir_plot_file))
 
+  # Generate Rt plot
+  rt_plot <- plot_rt_curves(file.path(output_dir, "secondary_infections.csv"), location = file.path(output_dir, rt_plot_file))
 
-  plot_rt_curves("data/Andorra/simulation_outputs/secondary_infections.csv")
-
-  create_serial_interval_plot("data/Andorra/simulation_outputs/serial_intervals.csv", display = TRUE)
+  # Generate Serial Interval plot
+  si_plot <- create_serial_interval_plot(file.path(output_dir, "serial_intervals.csv"), display = TRUE, location = file.path(output_dir, si_plot_file))
   
-  return(list(simulation = sim, data = df_long, sir_plot = sir_plot, rt_plot = "", si_plot = ""))
+  return(list(simulation = sim, data = df_long, sir_plot = sir_plot, rt_plot = rt_plot, si_plot = si_plot))
 }
 
 results <- run_complete_simulation()
