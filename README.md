@@ -80,7 +80,7 @@ In summary, the spatial structure for a region is generated using EpiGeoPop. Thi
 <figure>
     <img src="./images/Andorra.png" alt="Population density map of Andorra">
     <figcaption><i>Figure 3. Example output: Population density map of Andorra.</i></figcaption>
-</figure><br>
+</figure><br><br>
 
 
 **2.2 Using User-defined values** 
@@ -177,8 +177,7 @@ An overview of the program workflow is illustrated in Figure 4.
 <figure>
     <img src="./images/program_workflow.png" alt="Overview of simulation workflow">
     <figcaption><i>Figure 4. Overview of simulation workflow: These steps are required to run a simulation.</i></figcaption>
-</figure>
-&nbsp;
+</figure><br>
 
 **Instructions:**
 1. After saving the configured file, either `simulation_epigeopop.R` or `simulation_toy.R`, run this code!
