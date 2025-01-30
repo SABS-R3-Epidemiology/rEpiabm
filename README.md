@@ -113,7 +113,7 @@ The following parameters are essential and need to be stated by the user to run 
 
 * Name of the path to the csv file from EpiGeoPop
 * Number of infected individuals (I<sub>mild</sub>: see Figure 2.): enter the number of infected individuals at the start of the simulation.
-* Proportion of households with 1 individual, 2 individuals, 3 individuals... upto 10 individuals. This information is usually found using census data (or equivalent) for your country.
+* Proportion of households with 1 individual, 2 individuals, 3 individuals... up to 10 individuals. This information is usually found using census data (or equivalent) for your country.
 * Duration of the simulation (in days)
 * Select any output options required
 
