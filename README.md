@@ -68,7 +68,7 @@ The structure is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiolo
 1. Go to [EpiGeoPop](https://github.com/SABS-R3-Epidemiology/EpiGeoPop) repository and follow the instructions to extract a csv file of your required region.
 
 > [!NOTE]  
-> The json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals... upto 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the json file as described [in this Jupyter notebook](./walk_through/detailed_example.ipynb). 
+> The .json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals... up to 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the .json file as described [in this Jupyter notebook](./walk_through/detailed_example.ipynb). 
 
 2. Copy the extracted file to the new folder `data/<your_country>/inputs`
 
@@ -113,13 +113,13 @@ The following parameters are essential and need to be stated by the user to run 
 
 * Name of the path to the csv file from EpiGeoPop
 * Number of infected individuals (I<sub>mild</sub>: see Figure 2.): enter the number of infected individuals at the start of the simulation.
-* Proportion of households with 1 individual, 2 individuals, 3 individuals... upto 10 individuals. This information is usually found using census data (or equivalent) for your country.
+* Proportion of households with 1 individual, 2 individuals, 3 individuals... up to 10 individuals. This information is usually found using census data (or equivalent) for your country.
 * Duration of the simulation (in days)
 * Select any output options required
 
 **Instructions:**
 1. Open `Andorra_parameters.json` (copied from `Andorra` in Step 1 above) and save with `<your_country>'s` name (keep first letter capitalised).
-2. Amend the parameter array household_size_distribution to have your countries' distribution 
+2. Amend the parameter array `household_size_distribution` to have your countries' distribution of households 
 > [!WARNING]  
 > Make sure these match the values used to extract your population data in Step 2. 
 3. Open `simulation_epigeopop.R` and amend:
