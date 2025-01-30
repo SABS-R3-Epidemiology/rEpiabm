@@ -5,7 +5,7 @@ rEpiabm enables users familiar with R to use [Epiabm](https://github.com/SABS-R3
 ## Summary of Epiabm functionality
 
 ### Basic Architecture
-To model an epidemic, contact events occur within the population spatial structure (see Figure 1.). A compartmental model is used for the progression of the disease within-host (see Figure 2.). These two architectures are highly configurable; this allows us to study a wide range of simulation scenarios.
+To model an epidemic, contact events occur within the population spatial structure (see Figure 1.). A compartmental model is used for the progression of the disease within-host (see Figure 2.). These two architectures are highly configurable which allows us to study a wide range of simulation scenarios.
 
 <div style="display: flex; gap: 20px;">
   <div style="flex: 1;">
@@ -20,40 +20,34 @@ To model an epidemic, contact events occur within the population spatial structu
 
 ## Running a simulation
 
-The basic flow of a simulation is described below; a more detailed, complex example is illustrated [in this Jupyter notebook](./walk_through/detailed_example.ipynb). We give instructions to run a basic simulation and use 'Andorra' as an example of the region of interest. Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
+The basic flow of a simulation is described below; a more detailed, complex example is illustrated [in this Jupyter notebook](./walk_through/detailed_example.ipynb). We give instructions to run a basic simulation for both a toy population and a population extracted by [EpiGeoPop](https://github.com/SABS-R3-Epidemiology/EpiGeoPop), using 'Andorra' as an example of the region of interest. Also, [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model) details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.
 
 
 ### Step 1: Set up rEpiabm
-Before running a simulation, rEpiabm needs to be installed with all dependencies mentioned in the DESCRIPTION file. Also, the folder structure used by the R program file needs to be set up for your region of interest.
+Before running a simulation, rEpiabm needs to be installed with all dependencies mentioned in the DESCRIPTION file. Also, the input folder structure used by the R program file needs to be set up.
 
 **Instructions:**
-1. Go to your github personal Settings/Developer Settings
-2. Create a new personal access token (fine-grained)
-3. Launch RStudio and type:
-```file.edit("~/.Renviron")```
-
-4. In the file add the line:
-
-    ```GITHUB_PAT=your_personal_access_token```
-
-  where the above is your real token from Github, and make sure to save the file.
-
-5. Restart RStudio
-6. Create a new directory for the repository and enter in R terminal (from inside this new directory):
-
-  ```
+1. Clone the Github rEpiabm repository
+2. Create a GitHub Personal Access Token (fine-grained)
+3. Configure RStudio with your token
+4. Install required R packages
+  ```bash
   install.packages("devtools")
   devtools::install_github("SABS-R3-Epidemiology/rEpiabm")
   ```
-7. You now have two different simulation options:
+5. You now have two different simulation options:
 
-    a) *An Epigeopop based simulation which uses **real** data to create the Population spatial structure*: If this is the option you require, copy the example 'Andorra' folder structure within the data folder and name it with your region of interest (include the files as you will need to edit these for your simulation).
+    5.1 *An Epigeopop based simulation* 
+    
+    This uses **real** data to create the Population spatial structure*: Copy the example `Andorra` folder structure within the data folder and name it with your region of interest. Include the `.json` file as you will need to edit this later for your simulation.
 
     OR
 
-    b) *A toy simulation where users can specify population parameter values (usually small quantities) to create the Population spatial structure*: If this is the option you require, copy the example 'toy' folder structure within the data folder and name it with your region of interest (include the files as you will need to edit these for your simulation)
+    5.2 *A toy simulation*
 
-You are now ready to configure a simulation. 
+    Users can specify population parameter values (usually small quantities) to create the Population spatial structure*: Copy the example `toy` folder structure within the data folder and name it with your region of interest. Include the `.json` file as you will need to edit this later for your simulation.<br><br>
+
+You are now ready to generate or configure the population for your simulation. 
 
 ### Step 2: Generate the population spatial structure
 As shown in Figure 1, the region of interest is broken into a spatial structure:
@@ -62,7 +56,10 @@ As shown in Figure 1, the region of interest is broken into a spatial structure:
 * *Households* - quantity per microcell is based on a probabilistic distribution. All individuals are assigned to one household and do not move households during the simulation.
 * *Places* - quantity per microcell is based on a probabilistic distribution. These are spaces where individuals might meet other individuals from different households, a workplace or a public park for example.
 
-Follow **Step 2.1** instructions for an Epigeopop simulation or **Step 2.2** for a toy simulation.
+<div style="margin: 1em 0; padding: 1em; border-left: 4px solid #f0ad4e; background-color: #fcf8f2;">
+<strong>Important:</strong> Follow <strong>Step 2.1</strong> instructions for an Epigeopop simulation or <strong>Step 2.2</strong> for a toy simulation.
+</div>
+
 
 **Step 2.1 Using EpiGeoPop**
 
@@ -124,10 +121,10 @@ The following parameters are essential and need to be stated by the user to run 
 1. Open your version of *Andorra_parameters.json*
  (copied from ```Andorra``` in Step 1 above) and save with *<your_country>*'s name (keep first letter capitalised).
 2. Amend the parameter array household_size_distribution to have your countries' distribution used in step 2. 
- 3. Open *andorra_simulation_flow.R* and amend:
-    * ```file_loc```: the absolute path to your csv file exported from EpiGeoPop
-    * ```initial_infected_number```: in sim_param list, enter the number of infected individuals at the start of the simulation.
-    * ```simulation_end_time```: in sim_param list, enter the time for the simulation to run (in days)
+ 3. Open `simulation_epigeopop.R` and amend:
+    * `input_dir`: the absolute path to your csv file exported from EpiGeoPop
+    * `initial_infected`: enter the number of infected individuals at the start of the simulation.
+    * ``: enter the time for the simulation to run (in days)
     * ```Andorra``` in final line: change to *<your_country>*.
 
  More detailed instructions are available [in this Jupyter notebook](./walk_through/detailed_example.ipynb) and further optional parameters are described in [the Wiki](https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model)
@@ -160,10 +157,10 @@ Individual’s location and infection status is updated each day:
 * HostProgressionSweep - Individual’s Infection progress is updated using the compartmental model
 
 **Instructions:**
-1. After saving the configured file *andorra_simulation_flow.R*, run this code!
+1. After saving the configured file, either `simulation_epigeopop.R` or `simulation_toy.R`, run this code!
 
 ### Step 5: Evaluate results
-A simulation produces one csv output file by default, found in data/*<your_country>*/simulation_outputs. This file contains the number of individuals for each infection status (S, E, I<sub>mild</sub>, etc) for each day.
+A simulation produces one csv output file by default, found in the directory `data/<your_country>/simulation_outputs`. This file contains the number of individuals for each infection status (S, E, I<sub>mild</sub>, etc) for each day.
 
 It also produces a SI<sub>mild</sub>RD plot, which shows the overall progression of each status for the duration of the simulation.
 

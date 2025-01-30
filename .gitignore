@@ -6,6 +6,9 @@
 .RData
 .RDataTmp
 
+# IDE specific files
+.DS_Store
+
 # User-specific files
 .Ruserdata
 
