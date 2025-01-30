@@ -53,8 +53,8 @@ You are now ready to generate or configure the population for your simulation.
 As shown in Figure 1, the region of interest is broken into a spatial structure:
 * *Cells* - largest areas, based on a fixed width
 * *Microcells* - cells are split into microcells which contain smaller areas containing individuals
-* *Households* - quantity per microcell is based on a probabilistic distribution. All individuals are assigned to one household and do not move households during the simulation.
-* *Places* - quantity per microcell is based on a probabilistic distribution. These are spaces where individuals might meet other individuals from different households, a workplace or a public park for example.
+* *Households* - all individuals are assigned to one household and do not move households during the simulation.
+* *Places* - these are spaces where individuals might meet other individuals from different households, a workplace or a public park for example.
 
 > [!IMPORTANT]  
 > Follow **2.1 Using EpiGeoPop** instructions for extracting a population using Epigeopop or **2.2 Using User-defined values** for a toy population.
