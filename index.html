@@ -175,22 +175,22 @@ Please see more detailed instructions <a href="./walk_through/toy_example.ipynb"
 </h3>
 <p>Once configured, the simulation takes the generated population and performs the following ‘sweeps’:</p>
 <p><strong>Initialisation sweeps:</strong> * InitialHouseholdSweep - Assign individuals to households * InitialisePlaceSweep - Assign individuals to places * InitialInfectedSweep - Assign which individuals are initially infected</p>
-<p>An overview of the program workflow is illustrated in Figure 4.</p>
-<figure><img src="./images/program_workflow.png" alt="Overview of simulation workflow"><figcaption><i>Figure 4. Overview of simulation workflow: These steps are required to run a simulation.</i>
-</figcaption></figure><p> </p>
 <blockquote>
 <p>[!NOTE]<br>
 There are optional modules such as recording demographics, which are described in <a href="https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model" class="external-link">the Wiki</a></p>
 </blockquote>
 <p><strong>Simulation sweeps:</strong></p>
 <p>Individual’s location and infection status is updated each day: * UpdatePlaceSweep - Account for movement of individuals by refreshing their ‘place’ assignments * Check each infected individual to see if they infect others: * HouseholdSweep - At a household * PlaceSweep - At a place * SpatialSweep - Between cells * QueueSweep - Any successful infections will update the newly infected person’s status from S (Susceptible) to E (Exposed). * HostProgressionSweep - Individual’s Infection progress is updated using the compartmental model</p>
+<p>An overview of the program workflow is illustrated in Figure 4.</p>
+<figure><img src="./images/program_workflow.png" alt="Overview of simulation workflow"><figcaption><i>Figure 4. Overview of simulation workflow: These steps are required to run a simulation.</i>
+</figcaption></figure><p> </p>
 <p><strong>Instructions:</strong> 1. After saving the configured file, either <code>simulation_epigeopop.R</code> or <code>simulation_toy.R</code>, run this code!</p>
 </div>
 <div class="section level3">
 <h3 id="step-5-evaluate-results">Step 5: Evaluate results<a class="anchor" aria-label="anchor" href="#step-5-evaluate-results"></a>
 </h3>
 <p>A simulation produces one csv output file by default, found in the directory <code>data/&lt;your_country&gt;/simulation_outputs</code>. This file contains the number of individuals for each infection status (S, E, I<sub>mild</sub>, etc) for each day.</p>
-<p>It also produces a SI<sub>mild</sub>RD plot, which shows the overall progression of each status for the duration of the simulation.</p>
+<p>It also produces three common plots: - a SI<sub>mild</sub>RD plot, which shows the overall progression of each status for the duration of the simulation. - a Reproduction number, R<sub>t</sub>, plot - a Serial-Interval distribution plot</p>
 <p>Further optional files are available, details described in <a href="https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model" class="external-link">the Wiki</a>. These data files can be used to produce plots for further analysis.</p>
 </div>
 </div>
