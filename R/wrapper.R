@@ -28,7 +28,7 @@ create_toy_population <- function(pe, pop_params) {
 }
 
 create_epigeopop_population <- function(pe, epigeopop_file) {
-  return(pe$routine$FilePopulationFactory()$make_pop_from_file(epigeopop_file))
+  return(pe$routine$FilePopulationFactory()$make_pop(epigeopop_file))
 }
 
 # Wrap python simulation function
@@ -46,6 +46,41 @@ run_simulation <- function(pe, sim_params, file_params, dem_file_params, populat
     ),
     list(
       pe$sweep$HouseholdSweep(),
+      pe$sweep$QueueSweep(),
+      pe$sweep$HostProgressionSweep()
+    ),
+    sim_params,
+    file_params,
+    inf_history_params
+  )
+
+  # Run simulation
+  sim$run_sweeps()
+  sim$compress_csv()
+
+  return(sim)
+}
+
+# Wrap python simulation function
+run_geopop_sim <- function(pe, sim_params, file_params, dem_file_params, population, inf_history_params, seed = 42) {
+  # Set seed
+  pe$routine$Simulation$set_random_seed(seed = as.integer(seed))
+
+  # Create and configure simulation
+  sim <- pe$routine$Simulation()
+  sim$configure(
+    population,
+    list(
+      pe$sweep$InitialHouseholdSweep(),
+      pe$sweep$InitialInfectedSweep(),
+      pe$sweep$InitialisePlaceSweep(),
+      pe$sweep$InitialDemographicsSweep(dem_file_params)
+    ),
+    list(
+      pe$sweep$UpdatePlaceSweep(),
+      pe$sweep$HouseholdSweep(),
+      pe$sweep$PlaceSweep(),
+      pe$sweep$SpatialSweep(),
       pe$sweep$QueueSweep(),
       pe$sweep$HostProgressionSweep()
     ),
@@ -175,7 +210,7 @@ plot_rt_curves <- function(file_path) {
   print("R_t plot generated successfully.")
 
   # Save the plot
-  save_sir_plot(gg, "simulation_outputs/rt_curve.png")
+  save_sir_plot(gg, "data/simulation_outputs/rt_curve.png")
 
   return(gg)
 }
@@ -208,6 +243,9 @@ create_serial_interval_plot <- function(file_path, title = "Serial Interval Dist
   if (display) {
     print(p)
   }
+
+  # Save the plot
+  save_sir_plot(p, "data/simulation_outputs/serial_interval.png")
 
   return(p)
 }
