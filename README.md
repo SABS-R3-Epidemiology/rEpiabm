@@ -56,8 +56,8 @@ As shown in Figure 1, the region of interest is broken into a spatial structure:
 * *Households* - quantity per microcell is based on a probabilistic distribution. All individuals are assigned to one household and do not move households during the simulation.
 * *Places* - quantity per microcell is based on a probabilistic distribution. These are spaces where individuals might meet other individuals from different households, a workplace or a public park for example.
 
-[!IMPORTANT]
-Follow **Step 2.1** instructions for an Epigeopop simulation or **Step 2.2** for a toy simulation.
+> [!IMPORTANT]  
+> Follow **Step 2.1** instructions for an Epigeopop simulation or **Step 2.2** for a toy simulation.
 
 
 **Step 2.1 Using EpiGeoPop**
