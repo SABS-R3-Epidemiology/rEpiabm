@@ -55,11 +55,146 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div class="section level1">
-<div class="page-header"><h1 id="repiabm">rEpiabm<a class="anchor" aria-label="anchor" href="#repiabm"></a>
-</h1></div>
-<p>R-wrapper for Epiabm</p>
+
+<p>ADD BADGES # rEpiabm rEpiabm enables users familiar with R to use <a href="https://github.com/SABS-R3-Epidemiology/epiabm" class="external-link">Epiabm</a>. Epiabm is a simulation tool that models the progress of an epidemic across a specified region of interest within a specific timeframe. It has been developed in python (PyEpiabm) for small-scale implementations and C++ (cEpiabm) for fast, large-scale simulations. PyEpiabm has a modular design, with many options to configure specific requirements.</p>
+<div class="section level2">
+<h2 id="summary-of-epiabm-functionality">Summary of Epiabm functionality<a class="anchor" aria-label="anchor" href="#summary-of-epiabm-functionality"></a>
+</h2>
+<div class="section level3">
+<h3 id="basic-architecture">Basic Architecture<a class="anchor" aria-label="anchor" href="#basic-architecture"></a>
+</h3>
+<p>To model an epidemic, contact events occur within the population spatial structure (see Figure 1.). A compartmental model is used for the progression of the disease within-host (see Figure 2.). These two architectures are highly configurable which allows us to study a wide range of simulation scenarios.</p>
+<div style="display: flex; gap: 20px;">
+<div style="flex: 1;">
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="sc">&lt;</span>img src<span class="ot">=</span><span class="st">"./images/population_spatial_structure.png"</span> alt<span class="ot">=</span><span class="st">"Population spatial structure"</span> width<span class="ot">=</span><span class="st">"100%"</span><span class="sc">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="er">&lt;</span>p<span class="sc">&gt;</span><span class="er">&lt;</span>figcaption<span class="sc">&gt;</span><span class="er">&lt;</span>i<span class="sc">&gt;</span><span class="er">&lt;</span>b<span class="sc">&gt;</span>Figure <span class="fl">1.</span><span class="sc">&lt;</span><span class="er">/</span>b<span class="sc">&gt;</span> Population Spatial Structure<span class="sc">:</span> The environment is modelled using <span class="sc">&lt;</span>a href<span class="ot">=</span><span class="st">"https://github.com/SABS-R3-Epidemiology/EpiGeoPop"</span><span class="sc">&gt;</span>EpiGeoPop<span class="sc">&lt;</span><span class="er">/</span>a<span class="sc">&gt;</span>, which takes a region of interest, creates layers of sub<span class="sc">-</span>regions of different types and populates these with individuals.<span class="sc">&lt;</span><span class="er">/</span>p<span class="sc">&gt;</span><span class="er">&lt;</span>figcaption<span class="sc">&gt;</span><span class="er">&lt;/</span>i<span class="sc">&gt;</span></span></code></pre></div>
 </div>
+<div style="flex: 1;">
+<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="sc">&lt;</span>img src<span class="ot">=</span><span class="st">"./images/infection_progression.jpg"</span> alt<span class="ot">=</span><span class="st">"Infection progression"</span> width<span class="ot">=</span><span class="st">"100%"</span><span class="sc">&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="er">&lt;</span>p<span class="sc">&gt;</span><span class="er">&lt;</span>figcaption<span class="sc">&gt;</span><span class="er">&lt;</span>i<span class="sc">&gt;</span><span class="er">&lt;</span>b<span class="sc">&gt;</span>Figure <span class="fl">2.</span><span class="sc">&lt;</span><span class="er">/</span>b<span class="sc">&gt;</span> Infection Progression<span class="sc">:</span> The infection progression is represented using a <span class="sc">&lt;</span>a href<span class="ot">=</span><span class="st">"https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology"</span><span class="sc">&gt;</span>compartment model<span class="sc">&lt;</span><span class="er">/</span>a<span class="sc">&gt;</span> which tracks the daily progress of the disease within an individual.<span class="sc">&lt;</span><span class="er">/</span>i<span class="sc">&gt;</span><span class="er">&lt;</span>figcaption<span class="sc">&gt;</span><span class="er">&lt;/</span>p<span class="sc">&gt;</span></span></code></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="running-a-simulation">Running a simulation<a class="anchor" aria-label="anchor" href="#running-a-simulation"></a>
+</h2>
+<p>The basic flow of a simulation is described below. More detailed, complex examples are illustrated <a href="./walk_through/epigeopop_example.ipynb">in this Jupyter notebook</a> using Epigeopop to extract the data and <a href="./walk_through/toy_example.ipynb">in this Jupyter notebook</a> for a toy population to experiment with. We give instructions to run a basic simulation for both a toy population and a population extracted by <a href="https://github.com/SABS-R3-Epidemiology/EpiGeoPop" class="external-link">EpiGeoPop</a>, using ‘Andorra’ as an example of the region of interest. Also, <a href="https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model" class="external-link">the Wiki</a> details optional parameters available to the user as well as those whose values are mentioned, but changing them is not recommended.</p>
+<div class="section level3">
+<h3 id="step-1-set-up-repiabm">Step 1: Set up rEpiabm<a class="anchor" aria-label="anchor" href="#step-1-set-up-repiabm"></a>
+</h3>
+<p>Before running a simulation, rEpiabm needs to be installed with all dependencies mentioned in the DESCRIPTION file. Also, the input folder structure used by the R program file needs to be set up.</p>
+<p><strong>Instructions:</strong> 1. Clone the Github rEpiabm repository 2. Create a GitHub Personal Access Token (fine-grained) 3. Configure RStudio with your token 4. Install required R packages <code>bash   install.packages("devtools")   devtools::install_github("SABS-R3-Epidemiology/rEpiabm")</code> 5. You now have two different simulation options:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fl">5.1</span> <span class="sc">*</span>An Epigeopop based simulation<span class="sc">*</span> </span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>This uses <span class="sc">**</span>real<span class="sc">**</span> data to create the Population spatial structure<span class="sc">*</span><span class="er">:</span> Copy the example <span class="st">`</span><span class="at">Andorra</span><span class="st">`</span> folder structure within the data folder and name it with your region of interest. Include the <span class="st">`</span><span class="at">.json</span><span class="st">`</span> file as you will need to edit this later <span class="cf">for</span> your simulation.</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>OR</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="fl">5.2</span> <span class="sc">*</span>A toy simulation<span class="sc">*</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>Users can specify population parameter <span class="fu">values</span> (usually small quantities) to create the Population spatial structure<span class="sc">*</span><span class="er">:</span> Copy the example <span class="st">`</span><span class="at">toy</span><span class="st">`</span> folder structure within the data folder and name it with your region of interest. Include the <span class="st">`</span><span class="at">.json</span><span class="st">`</span> file as you will need to edit this later <span class="cf">for</span> your simulation.</span></code></pre></div>
+<p>You are now ready to generate or configure the population for your simulation.</p>
+</div>
+<div class="section level3">
+<h3 id="step-2-generate-the-population-spatial-structure">Step 2: Generate the population spatial structure<a class="anchor" aria-label="anchor" href="#step-2-generate-the-population-spatial-structure"></a>
+</h3>
+<p>As shown in Figure 1, the region of interest is broken into a spatial structure: * <em>Cells</em> - largest areas, based on a fixed width * <em>Microcells</em> - cells are split into microcells which contain smaller areas containing individuals * <em>Households</em> - quantity per microcell is based on a probabilistic distribution. All individuals are assigned to one household and do not move households during the simulation. * <em>Places</em> - quantity per microcell is based on a probabilistic distribution. These are spaces where individuals might meet other individuals from different households, a workplace or a public park for example.</p>
+<blockquote>
+<p>[!IMPORTANT]<br>
+Follow <strong>2.1 Using EpiGeoPop</strong> instructions for extracting a population using Epigeopop or <strong>2.2 Using User-defined values</strong> for a toy population.</p>
+</blockquote>
+<p><strong>2.1 Using EpiGeoPop</strong></p>
+<p>The structure is created using <a href="https://github.com/SABS-R3-Epidemiology/EpiGeoPop" class="external-link">EpiGeoPop</a>. The user states a region of interest, Oxford or UK for example, and the tool extracts information from <a href="https://www.naturalearthdata.com/" class="external-link">Natural Earth</a> and <a href="https://data.jrc.ec.europa.eu/csv" class="external-link">JRC</a>, providing a csv file as output. This file contains one line per microcell for each cell, with the number of households, places and individuals to be used in the simulation (the quantity of individuals are extracted from Census data).</p>
+<p><strong>Instructions:</strong></p>
+<ol style="list-style-type: decimal">
+<li>Go to <a href="https://github.com/SABS-R3-Epidemiology/EpiGeoPop" class="external-link">EpiGeoPop</a> repository and follow the instructions to extract a csv file of your required region.</li>
+</ol>
+<blockquote>
+<p>[!NOTE]<br>
+The json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals… upto 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the json file as described <a href="./walk_through/detailed_example.ipynb">in this Jupyter notebook</a>.</p>
+</blockquote>
+<ol start="2" style="list-style-type: decimal">
+<li>Copy the extracted file to the new folder <code>data/&lt;your_country&gt;/inputs</code>
+</li>
+</ol>
+<blockquote>
+<p>[!CAUTION]<br>
+At the time of writing, the tool did not extract the data successfully. Please follow the instructions <a href="./walk_through/epigeopop_example.ipynb">in this Jupyter notebook</a>.</p>
+</blockquote>
+<p>In summary, the spatial structure for a region is generated using EpiGeoPop. This tool exports into a csv file the number of households, places, and individuals for each microcell. It also produces a Population Density map in <code>outputs/countries/&lt;your_country&gt;.pdf</code>, the example of Andorra is shown in Figure 3.</p>
+<figure><img src="./images/Andorra.png" alt="Population density map of Andorra"><figcaption><i>Figure 3. Example output: Population density map of Andorra.</i>
+</figcaption></figure><p><br><br></p>
+<p><strong>2.2 Using User-defined values</strong></p>
+<p>The user defines population values to generate a toy population spatial structure for the simulation. No region is specified but can be named to distinguish different simulation runs. This option is commonly used to <em>play</em> with different configurations of the simulation using small populations.</p>
+<p><strong>Instructions:</strong></p>
+<ol style="list-style-type: decimal">
+<li>Open simulation.R and amend the following parameters (these are the default values):</li>
+</ol>
+<pre><code>population_size = as.integer(100),
+cell_number = as.integer(2),
+microcell_number = as.integer(2),
+household_number = as.integer(5),
+place_number = as.integer(2)
+population_seed = as.integer(42)</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Save simulation.R</li>
+</ol>
+<blockquote>
+<p>[!NOTE]<br>
+Please see more detailed instructions <a href="./walk_through/toy_example.ipynb">in this Jupyter notebook</a>.</p>
+</blockquote>
+</div>
+<div class="section level3">
+<h3 id="step-3-configure-the-simulation">Step 3: Configure the simulation<a class="anchor" aria-label="anchor" href="#step-3-configure-the-simulation"></a>
+</h3>
+<p>Once the data for your region has either been extracted or configured using user-defined values, the simulation can be configured. Again, follow <strong>3.1 Using Epigeopop population</strong> to configure other simulation paramters for your region OR follow <strong>3.2 Using a toy population</strong>.</p>
+<p><strong>3.1 Using Epigeopop population</strong></p>
+<p>The following parameters are essential and need to be stated by the user to run a simulation:</p>
+<ul>
+<li>Name of the path to the csv file from EpiGeoPop</li>
+<li>Number of infected individuals (I<sub>mild</sub>: see Figure 2.): enter the number of infected individuals at the start of the simulation.</li>
+<li>Proportion of households with 1 individual, 2 individuals, 3 individuals… up to 10 individuals. This information is usually found using census data (or equivalent) for your country.</li>
+<li>Duration of the simulation (in days)</li>
+<li>Select any output options required</li>
+</ul>
+<p><strong>Instructions:</strong> 1. Open <code>Andorra_parameters.json</code> (copied from <code>Andorra</code> in Step 1 above) and save with <code>&lt;your_country&gt;'s</code> name (keep first letter capitalised). 2. Amend the parameter array <code>household_size_distribution</code> to have your countries’ distribution of households &gt; [!WARNING]<br>
+&gt; Make sure these match the values used to extract your population data in Step 2. 3. Open <code>simulation_epigeopop.R</code> and amend: * <code>input_dir</code>: the absolute path to your csv file exported from EpiGeoPop * <code>initial_infected</code>: enter the number of infected individuals at the start of the simulation. * <code>duration</code>: enter the time for the simulation to run (in days) * <code>Andorra</code> in final line: change to <code>&lt;your_country&gt;</code>.</p>
+<p>More detailed instructions are available <a href="./walk_through/epigeopop_example.ipynb">in this Jupyter notebook</a> and further optional parameters are described in <a href="https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model" class="external-link">the Wiki</a></p>
+<p><strong>3.2 Using a toy population</strong> The following parameters are essential and need to be stated by the user to run a simulation:</p>
+<ul>
+<li>Number of infected individuals (I<sub>mild</sub>: see Figure 2.): enter the number of infected individuals at the start of the simulation.</li>
+<li>Duration of the simulation (in days)</li>
+</ul>
+<p><strong>Instructions:</strong> 1. Open <code>simulation_toy.R</code> and amend: * <code>initial_infected</code>: enter the number of infected individuals at the start of the simulation. * <code>duration</code>: enter the time for the simulation to run (in days)</p>
+<p>More detailed instructions are available <a href="./walk_through/toy_example.ipynb">in this Jupyter notebook</a> and further optional parameters are described in <a href="https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model" class="external-link">the Wiki</a></p>
+<p><strong>Common adjustments:</strong> * At the start, infected individuals are distributed across all cells by default, you may want to put them in one cell. * Maximum infection radius: this sets a maximum distance for the infection to be able to spread from cell to cell * Age distribution used is required * Outputs to evaluate simulation (see Step 5: Evaluate Results)</p>
+</div>
+<div class="section level3">
+<h3 id="step-4-run-the-simulation">Step 4: Run the simulation<a class="anchor" aria-label="anchor" href="#step-4-run-the-simulation"></a>
+</h3>
+<p>Once configured, the simulation takes the generated population and performs the following ‘sweeps’:</p>
+<p><strong>Initialisation sweeps:</strong> * InitialHouseholdSweep - Assign individuals to households * InitialisePlaceSweep - Assign individuals to places * InitialInfectedSweep - Assign which individuals are initially infected</p>
+<blockquote>
+<p>[!NOTE]<br>
+There are optional modules such as recording demographics, which are described in <a href="https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model" class="external-link">the Wiki</a></p>
+</blockquote>
+<p><strong>Simulation sweeps:</strong></p>
+<p>Individual’s location and infection status is updated each day: * UpdatePlaceSweep - Account for movement of individuals by refreshing their ‘place’ assignments * Check each infected individual to see if they infect others: * HouseholdSweep - At a household * PlaceSweep - At a place * SpatialSweep - Between cells * QueueSweep - Any successful infections will update the newly infected person’s status from S (Susceptible) to E (Exposed). * HostProgressionSweep - Individual’s Infection progress is updated using the compartmental model</p>
+<p>An overview of the program workflow is illustrated in Figure 4.</p>
+<figure><img src="./images/program_workflow.png" alt="Overview of simulation workflow"><figcaption><i>Figure 4. Overview of simulation workflow: These steps are required to run a simulation.</i>
+</figcaption></figure><p><br><br></p>
+<p><strong>Instructions:</strong> 1. After saving the configured file, either <code>simulation_epigeopop.R</code> or <code>simulation_toy.R</code>, run this code!</p>
+</div>
+<div class="section level3">
+<h3 id="step-5-evaluate-results">Step 5: Evaluate results<a class="anchor" aria-label="anchor" href="#step-5-evaluate-results"></a>
+</h3>
+<p>A simulation produces one csv output file by default, found in the directory <code>data/&lt;your_country&gt;/simulation_outputs</code>. This file contains the number of individuals for each infection status (S, E, I<sub>mild</sub>, etc) for each day.</p>
+<p>It also produces three common plots: - a SI<sub>mild</sub>RD plot, which shows the overall progression of each status for the duration of the simulation. - a Reproduction number, R<sub>t</sub>, plot, which shows the trajectory of the recorded case reproduction number for the duration of the simulation. - a Serial-Interval distribution plot, an approximation of the effective serial-interval distribution of the model population.</p>
+<p>Further optional files are available, details described in <a href="https://github.com/SABS-R3-Epidemiology/epiabm/wiki/Overview-of-the-Ferguson-Model" class="external-link">the Wiki</a>. These data files can be used to produce plots for further analysis.</p>
+</div>
+</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
