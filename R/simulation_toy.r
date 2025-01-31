@@ -14,7 +14,7 @@ run_complete_simulation <- function(output_dir="data/toy/simulation_outputs",
 
   # User-defined variables
   input_dir <- ""
-  config_parameters <- "data/simple_parameters.json"
+  config_parameters <- "data/toy/simple_parameters.json"
   seed <- 42
 
   pe <- configure_parameters(pe, input_dir, config_parameters)
