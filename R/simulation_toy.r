@@ -62,7 +62,6 @@ run_complete_simulation <- function(output_dir="data/toy/simulation_outputs",
 
   # Select population creation function
   population_creation_function <- if (use_toy_example) create_toy_population else create_epigeopop_population
-  
    # nolint: line_length_linter.
   population <- population_creation_function(pe, if (use_toy_example) pop_params else "data/epigeopop.csv")
 
