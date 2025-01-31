@@ -62,10 +62,13 @@ run_complete_simulation <- function(output_dir="data/toy/simulation_outputs",
 
   # Select population creation function
   population_creation_function <- if (use_toy_example) create_toy_population else create_epigeopop_population
+  
+   # nolint: line_length_linter.
   population <- population_creation_function(pe, if (use_toy_example) pop_params else "data/epigeopop.csv")
 
   # Run simulation
-  sim <- run_simulation(pe, sim_params, file_params, dem_file_params, population, inf_history_params, seed)
+  sim <- run_simulation(pe, sim_params, file_params, 
+  dem_file_params, population, inf_history_params, seed)
 
   # Process data
   df_long <- process_simulation_data(file.path(output_dir, output_file))
@@ -79,12 +82,17 @@ run_complete_simulation <- function(output_dir="data/toy/simulation_outputs",
 
 
   # Generate Rt plot
-  rt_plot <- plot_rt_curves(file.path(output_dir, "secondary_infections.csv"), location = file.path(output_dir, rt_plot_file))
+  rt_plot <- plot_rt_curves(file.path(output_dir,
+   "secondary_infections.csv"), 
+   location = file.path(output_dir, rt_plot_file))
 
   # Generate Serial Interval plot
-  si_plot <- create_serial_interval_plot(file.path(output_dir, "serial_intervals.csv"), display = TRUE, location = file.path(output_dir, si_plot_file))
+  si_plot <- create_serial_interval_plot(file.path(output_dir,
+   "serial_intervals.csv"), display = TRUE, 
+   location = file.path(output_dir, si_plot_file))
   
-  return(list(simulation = sim, data = df_long, sir_plot = sir_plot, rt_plot = "", si_plot = ""))
+  return(list(simulation = sim, data = df_long,
+   sir_plot = sir_plot, rt_plot = "", si_plot = ""))
 }
 
 results <- run_complete_simulation()
