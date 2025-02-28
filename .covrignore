@@ -2,8 +2,8 @@
 R/zzz.R
 R/simulation_epigeopop.r
 R/simulation_toy.r
-data/
-images/
-man/
-tests/
-walk_through/
+data
+images
+man
+tests
+walk_through
