@@ -1,6 +1,5 @@
-source("R/maths.R")
-
 library(testthat)
+library(rEpiabm)
 
 test_that("Addition is correct",{
     expect_equal(addition(2,3),5)
