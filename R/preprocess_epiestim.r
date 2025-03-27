@@ -29,7 +29,7 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
   mean_gen_time <- mean(data_1d)
   sd_gen_time <- sd(data_1d)
   
-  # Display results if requested
+  # Display statistic results
   if (display) {
     cat("\nMean Generation Time:", mean_gen_time, "\n")
     cat("Standard Deviation:", sd_gen_time, "\n")
@@ -49,7 +49,7 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
     cat("Generation plot saved\n")
   }
   
-  # Save to file if location is provided
+  # Save to file if location is provided, otherwise prompt
   if (!missing(location)) {
     write.csv(gen_time_dist, location, row.names = FALSE)
     cat("Generation time distribution saved to:", location, "\n")
@@ -57,7 +57,6 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
     cat("No location for output given; please amend preprocess_epiestim.r")
   }
   
-  # Return the distribution and statistics
   return()
 }
   
