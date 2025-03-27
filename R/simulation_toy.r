@@ -1,6 +1,16 @@
 source("R/wrapper.R")
 # Example usage:
-# Run complete simulation
+
+
+#' Runs the simulation
+#' @param output_dir location of the output directory
+#' @param output_file name of the output file
+#' @param  sir_plot_file file name of the SIR plot 
+#' @param rt_plot_file file name of the RT Curve plot
+#' @param si_plot_file serial interval plot graph
+#' @param use_toy_example boolean flag for running the toy example
+#' @param simulation_duration duration of the simulation (days)
+#' @param  initial_infected starting number of people in the Imild compartment 
 run_complete_simulation <- function(output_dir="data/toy/simulation_outputs",
                                     output_file = "output.csv",
                                     sir_plot_file = "SIR_plot.png",
