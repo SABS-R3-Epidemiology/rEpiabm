@@ -73,12 +73,21 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
 }
 
 # Calculate incidence, based on changes in Susceptible
-calculate_susceptible_differences <- function(file_path, display = TRUE) {
+calculate_susceptible_differences <- function(file_path, output_dir = ".", display = TRUE) {
   # Read the CSV file
   data <- read.csv(file_path, header = TRUE)
   
-  # Extract the Susceptible column
-  susceptible <- data$InfectionStatus.Susceptible
+  # Group by time and sum the Susceptible column
+  library(dplyr)
+  
+  # Aggregate data by time, summing the Susceptible column
+  grouped_data <- data %>%
+    group_by(time) %>%
+    summarize(susceptible = sum(InfectionStatus.Susceptible)) %>%
+    arrange(time)
+  
+  # Extract the susceptible column from grouped data
+  susceptible <- grouped_data$susceptible
   
   # Calculate consecutive differences (day-to-day changes)
   # Negative values indicate decreases in susceptible population (new infections)
@@ -91,8 +100,8 @@ calculate_susceptible_differences <- function(file_path, display = TRUE) {
   # Only keep positive values (representing new infections)
   incidence[incidence < 0] <- 0
   
-  # Create time series for incidence (using the time column from original data)
-  time_points <- data$time[-1]  # Remove first time point as we have n-1 differences
+  # Create time series for incidence (using the time column from grouped data)
+  time_points <- grouped_data$time[-1]  # Remove first time point as we have n-1 differences
   
   # Display results if requested
   if (display) {
@@ -121,7 +130,8 @@ calculate_susceptible_differences <- function(file_path, display = TRUE) {
   
   return(list(
     time = time_points,
-    incidence = incidence
+    incidence = incidence,
+    total_incidence = sum(incidence)
   ))
 }
 
@@ -186,51 +196,29 @@ epiestim_data <- prepare_epiestim_data(
 # Load the saved data
 epiestim_data <- readRDS("data/Andorra/simulation_outputs/epiestim_data.rds")
 
-# First check the length of incidence data
-incidence_length <- length(epiestim_data$incidence$I)
-cat("Length of incidence data:", incidence_length, "\n")
-
-# Define start and end points for sliding windows (with error checking)
-t_start <- seq(2, incidence_length-30, by=30)  # Stepped by 30, stops before the end
-t_end <- t_start + 29  # Each window is 30 days long
-
-# Make sure t_end doesn't exceed data length
-if(max(t_end) > incidence_length) {
-  t_end <- t_end[t_end <= incidence_length]
-  t_start <- t_start[1:length(t_end)]
-}
-
-# Show the first few windows for debugging
-cat("First few time windows:\n")
-head(data.frame(start=t_start, end=t_end))
-
-# Create config with these windows
-config <- make_config(
-  list(
-    mean_si = epiestim_data$si_mean,
-    std_si = epiestim_data$si_sd,
-    t_start = t_start,
-    t_end = t_end
-  )
-)
-
-# Run estimate_R with this config
+# Run EpiEstim
 res_parametric_si <- estimate_R(
   incid = epiestim_data$incidence,
   method = "parametric_si",
-  config = config
+  config = make_config(
+    list(
+      mean_si = epiestim_data$si_mean,
+      std_si = epiestim_data$si_sd
+    )
+  )
 )
 
-# # With the SI distribution directly
-# res_non_parametric_si <- estimate_R(
-#   incid = epiestim_data$incidence,
-#   method = "non_parametric_si",
-#   config = make_config(
-#     list(
-#       si_distr = epiestim_data$si_distr
-#     )
-#   )
-# )
+
+# With the SI distribution directly
+res_non_parametric_si <- estimate_R(
+  incid = epiestim_data$incidence,
+  method = "non_parametric_si",
+  config = make_config(
+    list(
+      si_distr = epiestim_data$si_distr
+    )
+  )
+)
 
 # Print summary to console
 cat("\n\n===== SUMMARY OF EPIESTIM RESULTS =====\n\n")
