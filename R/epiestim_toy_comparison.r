@@ -1,7 +1,7 @@
 library(EpiEstim)
 library(ggplot2)
 
-output_dir <- "data/Andorra/simulation_outputs"
+output_dir <- "data/toy/simulation_outputs"
 
 # Calculate count of Generation time distribution, std dev and mean
 create_gen_time_array <- function(file_path, display = TRUE, location) {
@@ -194,7 +194,7 @@ epiestim_data <- prepare_epiestim_data(
 
 
 # Load the saved data
-epiestim_data <- readRDS("data/Andorra/simulation_outputs/epiestim_data.rds")
+epiestim_data <- readRDS("data/toy/simulation_outputs/epiestim_data.rds")
 
 # Run EpiEstim
 res_parametric_si <- estimate_R(
@@ -217,19 +217,19 @@ cat("\n\n===== FIRST ROWS OF R ESTIMATES =====\n\n")
 print(head(res_parametric_si$R))
 
 # Save the R estimates to a CSV file
-r_estimates_file <- "data/Andorra/simulation_outputs/R_estimates.csv"
+r_estimates_file <- "data/toy/simulation_outputs/R_estimates.csv"
 write.csv(res_parametric_si$R, r_estimates_file)
 cat("\nR estimates saved to:", r_estimates_file, "\n")
 
 # Save plots to files
-pdf_file <- "data/Andorra/simulation_outputs/epiestim_plot.pdf"
+pdf_file <- "data/toy/simulation_outputs/epiestim_plot.pdf"
 pdf(pdf_file)
 plot(res_parametric_si)
 dev.off()
 cat("\nPlot saved to:", pdf_file, "\n")
 
 # Create and save a more detailed ggplot
-png_file <- "data/Andorra/simulation_outputs/epiestim_detailed_plot.png"
+png_file <- "data/toy/simulation_outputs/epiestim_detailed_plot.png"
 library(ggplot2)
 
 p <- ggplot(res_parametric_si$R) + 
@@ -269,19 +269,19 @@ cat("\n\n===== FIRST ROWS OF R ESTIMATES =====\n\n")
 print(head(res_non_parametric_si$R))
 
 # Save the R estimates to a CSV file
-r_estimates_file_np <- "data/Andorra/simulation_outputs/R_estimates_np.csv"
+r_estimates_file_np <- "data/toy/simulation_outputs/R_estimates_np.csv"
 write.csv(res_non_parametric_si$R, r_estimates_file_np)
 cat("\nR estimates saved to:", r_estimates_file_np, "\n")
 
 # Save plots to files
-pdf_file_np <- "data/Andorra/simulation_outputs/epiestim_plot_np.pdf"
+pdf_file_np <- "data/toy/simulation_outputs/epiestim_plot_np.pdf"
 pdf(pdf_file)
 plot(res_non_parametric_si)
 dev.off()
 cat("\nPlot saved to:", pdf_file_np, "\n")
 
 # Create and save a more detailed ggplot
-png_file_np <- "data/Andorra/simulation_outputs/epiestim_detailed_plot_np.png"
+png_file_np <- "data/toy/simulation_outputs/epiestim_detailed_plot_np.png"
 library(ggplot2)
 
 p <- ggplot(res_non_parametric_si$R) + 
