@@ -275,7 +275,7 @@ cat("\nR estimates saved to:", r_estimates_file_np, "\n")
 
 # Save plots to files
 pdf_file_np <- "data/toy/simulation_outputs/epiestim_plot_np.pdf"
-pdf(pdf_file)
+pdf(pdf_file_np)
 plot(res_non_parametric_si)
 dev.off()
 cat("\nPlot saved to:", pdf_file_np, "\n")
