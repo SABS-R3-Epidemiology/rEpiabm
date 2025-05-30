@@ -31,16 +31,68 @@ configure_parameters <- function(pe, input_dir, config_parameters) {
   return(pe)
 }
 
-#' c
-#' 
+# Core sweep functions
+InterventionSweep <- function(pe) {
+  return(pe$sweep$InterventionSweep())
+}
+
+PlaceSweep <- function(pe) {
+  return(pe$sweep$PlaceSweep())
+}
+
+QueueSweep <- function(pe) {
+  return(pe$sweep$QueueSweep())
+}
+
+SpatialSweep <- function(pe) {
+  return(pe$sweep$SpatialSweep())
+}
+
+TravelSweep <- function(pe) {
+  return(pe$sweep$TravelSweep())
+}
+
+UpdatePlaceSweep <- function(pe) {
+  return(pe$sweep$UpdatePlaceSweep())
+}
+
+HostProgressionSweep <- function(pe) {
+  return(pe$sweep$HostProgressionSweep())
+}
+
+HouseholdSweep <- function(pe) {
+  return(pe$sweep$HouseholdSweep())
+}
+
+# Initial sweep functions
+InitialDemographicsSweep <- function(pe, dem_file_params) {
+  return(pe$sweep$InitialDemographicsSweep(dem_file_params))
+}
+
+InitialHouseholdSweep <- function(pe) {
+  return(pe$sweep$InitialHouseholdSweep())
+}
+
+InitialInfectedSweep <- function(pe) {
+  return(pe$sweep$InitialInfectedSweep())
+}
+
+InitialisePlaceSweep <- function(pe) {
+  return(pe$sweep$InitialisePlaceSweep())
+}
+
+InitialVaccineQueue <- function(pe) {
+  return(pe$sweep$InitialVaccineQueue())
+}
+
+
 #' @param pe
 #' @param pop_params
 create_toy_population <- function(pe, pop_params) {
   return(pe$routine$ToyPopulationFactory()$make_pop(pop_params))
 }
 
-#' c
-#' 
+ 
 #' @param pe
 #' @param epigeopop_file
 create_epigeopop_population <- function(pe, epigeopop_file) {
@@ -65,13 +117,14 @@ run_simulation <- function(pe, sim_params, file_params, dem_file_params, populat
   sim$configure(
     population,
     list(
-      pe$sweep$InitialInfectedSweep(),
-      pe$sweep$InitialDemographicsSweep(dem_file_params)
+      InitialHouseholdSweep(pe),
+      InitialInfectedSweep(pe),
+      InitialDemographicsSweep(pe, dem_file_params)
     ),
     list(
-      pe$sweep$HouseholdSweep(),
-      pe$sweep$QueueSweep(),
-      pe$sweep$HostProgressionSweep()
+      HouseholdSweep(pe),
+      QueueSweep(pe),
+      HostProgressionSweep(pe)
     ),
     sim_params,
     file_params,
@@ -103,18 +156,18 @@ run_geopop_sim <- function(pe, sim_params, file_params, dem_file_params, populat
   sim$configure(
     population,
     list(
-      pe$sweep$InitialHouseholdSweep(),
-      pe$sweep$InitialInfectedSweep(),
-      pe$sweep$InitialisePlaceSweep(),
-      pe$sweep$InitialDemographicsSweep(dem_file_params)
+      InitialHouseholdSweep(pe),
+      InitialInfectedSweep(pe),
+      InitialisePlaceSweep(pe),
+      InitialDemographicsSweep(pe, dem_file_params)
     ),
     list(
-      pe$sweep$UpdatePlaceSweep(),
-      pe$sweep$HouseholdSweep(),
-      pe$sweep$PlaceSweep(),
-      pe$sweep$SpatialSweep(),
-      pe$sweep$QueueSweep(),
-      pe$sweep$HostProgressionSweep()
+      UpdatePlaceSweep(pe),
+      HouseholdSweep(pe),
+      PlaceSweep(pe),
+      SpatialSweep(pe),
+      QueueSweep(pe),
+      HostProgressionSweep(pe)
     ),
     sim_params,
     file_params,
