@@ -6,7 +6,7 @@ run_complete_simulation <- function(country="Andorra",
                                     sir_plot_file = "SIR_plot.png",
                                     rt_plot_file = "Rt_plot.png",
                                     si_plot_file = "SerialInterval_plot.png",
-                                    simulation_duration = 60,
+                                    simulation_duration = 10,
                                     initial_infected = 100) { 
   output_dir <- paste0("data/", country, "/simulation_outputs")
 
@@ -59,9 +59,10 @@ run_complete_simulation <- function(country="Andorra",
   "_microcells.csv"))
 
   # Run simulation
-  sim <- run_geopop_sim(pe, sim_params, 
-  file_params, dem_file_params, population, 
-  inf_history_params, seed)
+  sim <- run_simulation(pe= pe, sim_params= sim_params, 
+  file_params= file_params, inf_history_params=inf_history_params,
+  population = population, simulation_type = "epigeopop", sweep_params = NULL, 
+  dem_file_params=dem_file_params, seed)
 
   # Process data
   df_long <- process_simulation_data(file.path(output_dir, output_file))

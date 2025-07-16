@@ -76,7 +76,7 @@ run_complete_simulation <- function(output_dir="data/toy/simulation_outputs",
   population <- population_creation_function(pe, if (use_toy_example) pop_params else "data/epigeopop.csv")
 
   # Run simulation
-  sim <- run_simulation(pe, sim_params, file_params, 
+  sim <- run_simulation(pe, sim_params, file_params, simulation_type = "toy",
   dem_file_params, population, inf_history_params, seed)
 
   # Process data
