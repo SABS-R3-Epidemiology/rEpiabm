@@ -111,8 +111,8 @@ f_distribution <- read_csv(generation_times_path)
 rt_case_values <- Rt_inst_to_Rt_case(
   Rt_inst = rt_instantaneous,
   f = f_distribution,
-  t_start = 5,
-  t_end = 53
+  t_start = 2,
+  t_end = 60
 )
 
 print("Calculated Rt_case values (first 10):")

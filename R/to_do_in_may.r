@@ -57,7 +57,7 @@ Rt_inst_to_Rt_case <- function(Rt_inst, f, t_start, t_end) {
 # Main execution
 
 # Load the saved data
-epiestim_np_data <- readRDS("data/Andorra/simulation_outputs/R_extimates_np")
+epiestim_np_data <- readRDS("data/Andorra/simulation_outputs/R_estimates_np")
 
   # Check if file exists
   if (!file.exists(file_path)) {
