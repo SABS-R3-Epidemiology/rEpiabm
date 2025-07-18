@@ -1,12 +1,13 @@
-library(readr)
+# library(readr)
 library(dplyr)
 library(pracma)
 
-# Read the R_estimates_np.csv file
-r_estimates_path <- "data/Andorra/simulation_outputs/R_estimates_np.csv"
-r_estimates_df <- read_csv(r_estimates_path)
+input_dir <- "data/toy/simulation_outputs/epiestim"
 
-# Create a new column 't' corresponding to the range 5 to 57.
+# Read the R_estimates_np.csv file
+r_estimates_df <- read_csv(file.path(input_dir, "R_estimates_np.csv"))
+
+# Create a new column 't' corresponding to the range 8 to 57.
 # The length of the sequence should match the number of rows in r_estimates_df
 num_rows_r_estimates <- nrow(r_estimates_df)
 t_values <- seq(from = 5, by = 1, length.out = num_rows_r_estimates)

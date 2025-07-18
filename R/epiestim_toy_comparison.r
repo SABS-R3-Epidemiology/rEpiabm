@@ -1,7 +1,14 @@
 library(EpiEstim)
 library(ggplot2)
 
-output_dir <- "data/toy/simulation_outputs"
+input_dir <- "data/toy/simulation_outputs"
+output_dir <- "data/toy/simulation_outputs/epiestim"
+
+# Create output directory if it doesn't exist
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+  cat("Created output directory:", output_dir, "\n")
+}
 
 # Calculate count of Generation time distribution, std dev and mean
 create_gen_time_array <- function(file_path, display = TRUE, location) {
@@ -36,7 +43,7 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
   prob_array <- numeric(length(all_values))
 
   # Fill in probabilities for values that exist
-  for (i in 1:nrow(gen_time_dist)) {
+  for (i in seq_len(nrow(gen_time_dist))) {
     value <- gen_time_dist$value[i]
     prob_array[value] <- gen_time_dist$probability[i]
   }
@@ -49,8 +56,6 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
   if (display) {
     cat("\nMean Generation Time:", mean_gen_time, "\n")
     cat("Standard Deviation:", sd_gen_time, "\n")
-
-    library(ggplot2)
 
     p <- ggplot(gen_time_dist, aes(x = value, y = probability)) +
       geom_bar(stat = "identity", fill = "steelblue") +
@@ -70,7 +75,7 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
                 col.names = FALSE, quote = FALSE)
     cat("Generation time distribution saved to:", location, "\n")
   } else {
-    cat("No location for output given; please amend preprocess_epiestim.r")
+    cat("No location for output given; please amend preprocess_epiestim.r\n")
   }
 
   return(list(
@@ -80,7 +85,6 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
   ))
 }
 
-# Calculate incidence, based on changes in Susceptible
 # Calculate incidence, based on 'Exposed', not 'Infected'
 calculate_susceptible_diff <- function(file_path, display = TRUE,
                                        location) {
@@ -102,8 +106,6 @@ calculate_susceptible_diff <- function(file_path, display = TRUE,
   # Display results if requested
   if (display) {
     cat("\nTotal new infections detected:", sum(incidence), "\n")
-
-    library(ggplot2)
 
     # Create a data frame for plotting
     plot_data <- data.frame(
@@ -160,7 +162,7 @@ prepare_epiestim_data <- function(incidence_data, si_data, output_file) {
 
   # Save the data to an RDS file to be directly loaded by EpiEstim
   saveRDS(output_data, file = output_file)
-  cat("EpiEstim data saved to:", output_file, "\n")
+  cat("\nEpiEstim data saved to:", output_file, "\n")
 
   # Also save a text summary for reference
   sink(paste0(output_file, "_summary.txt"))
@@ -175,30 +177,26 @@ prepare_epiestim_data <- function(incidence_data, si_data, output_file) {
   return(output_data)
 }
 
-# Main execution
+# MAIN EXECUTION
 
-# Get incidence data
+# Calculate incidence from changes in susceptible population
 incidence_data <- calculate_susceptible_diff(
-  file.path(output_dir, "output.csv"),
-  display = TRUE
+  file.path(input_dir, "output.csv"),
+  display = TRUE, location <- file.path(output_dir, "incidence.csv")
 )
 
-# Get generation time distribution data
+# Generate Generation_time distribution array and values
 si_data <- create_gen_time_array(
-  file.path(output_dir, "generation_times.csv"),
-  display = TRUE
+  file.path(input_dir, "generation_times.csv"),
+  display = TRUE, location <- file.path(output_dir, "gen_time_dist.csv")
 )
 
 # Combine and save data for EpiEstim
 epiestim_data <- prepare_epiestim_data(
-  incidence_data, 
-  si_data, 
+  incidence_data,
+  si_data,
   file.path(output_dir, "epiestim_data.rds")
 )
-
-
-# Load the saved data
-epiestim_data <- readRDS("data/toy/simulation_outputs/epiestim_data.rds")
 
 # Run EpiEstim
 res_parametric_si <- estimate_R(
@@ -216,25 +214,13 @@ res_parametric_si <- estimate_R(
 cat("\n\n===== SUMMARY OF EPIESTIM RESULTS =====\n\n")
 print(summary(res_parametric_si))
 
-# Print the first few rows of R estimates
-cat("\n\n===== FIRST ROWS OF R ESTIMATES =====\n\n")
-print(head(res_parametric_si$R))
-
 # Save the R estimates to a CSV file
-r_estimates_file <- "data/toy/simulation_outputs/R_estimates.csv"
+r_estimates_file <- file.path(output_dir, "R_estimates.csv")
 write.csv(res_parametric_si$R, r_estimates_file)
 cat("\nR estimates saved to:", r_estimates_file, "\n")
 
-# Save plots to files
-pdf_file <- "data/toy/simulation_outputs/epiestim_plot.pdf"
-pdf(pdf_file)
-plot(res_parametric_si)
-dev.off()
-cat("\nPlot saved to:", pdf_file, "\n")
-
-# Create and save a more detailed ggplot
-png_file <- "data/toy/simulation_outputs/epiestim_detailed_plot.png"
-library(ggplot2)
+# Create and save plots
+png_file <- file.path(output_dir, "epiestim_detailed_plot.png")
 
 p <- ggplot(res_parametric_si$R) + 
   geom_ribbon(aes(x = t_end, 
@@ -268,25 +254,13 @@ res_non_parametric_si <- estimate_R(
 cat("\n\n===== SUMMARY OF EPIESTIM RESULTS =====\n\n")
 print(summary(res_non_parametric_si))
 
-# Print the first few rows of R estimates
-cat("\n\n===== FIRST ROWS OF R ESTIMATES =====\n\n")
-print(head(res_non_parametric_si$R))
-
 # Save the R estimates to a CSV file
-r_estimates_file_np <- "data/toy/simulation_outputs/R_estimates_np.csv"
+r_estimates_file_np <- file.path(output_dir, "R_estimates_np.csv")
 write.csv(res_non_parametric_si$R, r_estimates_file_np)
 cat("\nR estimates saved to:", r_estimates_file_np, "\n")
 
-# Save plots to files
-pdf_file_np <- "data/toy/simulation_outputs/epiestim_plot_np.pdf"
-pdf(pdf_file_np)
-plot(res_non_parametric_si)
-dev.off()
-cat("\nPlot saved to:", pdf_file_np, "\n")
-
-# Create and save a more detailed ggplot
-png_file_np <- "data/toy/simulation_outputs/epiestim_detailed_plot_np.png"
-library(ggplot2)
+# Create and save plot
+png_file_np <- file.path(output_dir, "epiestim_detailed_plot_np.png")
 
 p <- ggplot(res_non_parametric_si$R) +
   geom_ribbon(aes(x = t_end,
