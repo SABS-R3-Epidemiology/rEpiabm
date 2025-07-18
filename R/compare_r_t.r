@@ -1,6 +1,8 @@
-# library(readr)
 library(dplyr)
 library(pracma)
+library(readr)
+library(ggplot2)
+library(zoo)
 
 epiestim_dir <- "data/toy/simulation_outputs/epiestim"
 epiabm_dir <- "data/toy/simulation_outputs"
@@ -39,11 +41,8 @@ print(head(filtered_secondary_df))
 print(paste("Number of rows in filtered_secondary_df:",
             nrow(filtered_secondary_df)))
 
-# Drop the 'time' column
-filtered_secondary_df <- filtered_secondary_df %>%
-  select(-time)
-cat("\nThe 'time' column has been dropped.")
-
+# Linearly interpolate missing values
+filtered_secondary_df <- na.approx(filtered_secondary_df)
 
 inst_to_case <- function(rt_inst, f, t_start, t_end) {
   #' Converts instantaneous reproduction number to the case reproduction number
@@ -53,29 +52,50 @@ inst_to_case <- function(rt_inst, f, t_start, t_end) {
   rt_case <- c()
   dx <- 1 # Daily time steps
 
+  # Helper function to pad vectors with zeros
+  pad_with_zeros <- function(vector, target_length) {
+    if (length(vector) < target_length) {
+      return(c(vector, rep(0, target_length - length(vector))))
+    } else {
+      return(vector[1:target_length])
+    }
+  }
+
+  # Convert f to a vector if it's a dataframe
+  if (is.data.frame(f)) {
+    f_vector <- as.numeric(f[[1]])  # Take the first column
+  } else {
+    f_vector <- as.numeric(f)
+  }
+
   for (t in 0:(t_end - t_start - 1)) {
     # Extract the relevant portions of rt_inst and f
     rt_subset <- rt_inst[(t + 1):length(rt_inst)]
-    f_subset <- f[1:(t_end - t_start - t)]
+    print(head(rt_subset))
 
-    # Ensure vectors are same length (take minimum length)
-    min_len <- min(length(rt_subset), length(f_subset))
-    if (min_len > 0) {
-      rt_subset <- rt_subset[1:min_len]
-      f_subset <- f_subset[1:min_len]
-      print("rt_subset and f_subset data examples")
-      print(head(rt_subset))
-      print(head(f_subset))
+    # Fix the indexing - R is 1-indexed, not 0-indexed
+    # Also ensure we don't go beyond the length of f_vector
+    f_end_idx <- min(t_end - t_start - t, length(f_vector))
+    if (f_end_idx > 0) {
+      f_subset <- f_vector[1:f_end_idx]
+    } else {
+      f_subset <- numeric(0)
+    }
+    print(head(f_subset))
+
+    # Ensure vectors are same length by padding with zeros
+    max_len <- max(length(rt_subset), length(f_subset))
+
+    if (max_len > 0) {
+      # Pad both vectors to the same length
+      rt_subset <- pad_with_zeros(rt_subset, max_len)
+      f_subset <- pad_with_zeros(f_subset, max_len)
 
       # Create x values for integration
-      x_vals <- seq(t + t_start, by = 1.0, length.out = min_len)
-      print("x_vals first 5 values")
-      print(head(x_vals))
+      x_vals <- seq(t + t_start, by = 1.0, length.out = max_len)
 
       # Calculate integrand
-      print("x_vals first 5 values")
       integrand <- rt_subset * f_subset
-      print(head(integrand))
 
       # Perform Simpson's rule integration
       if (length(integrand) >= 3) {
@@ -100,20 +120,21 @@ inst_to_case <- function(rt_inst, f, t_start, t_end) {
 }
 
 
-# rt_inst: This will be the 'R_t' column from filtered_secondary_df
-rt_instantaneous <- filtered_secondary_df$R_t
+# rt_inst: This will be the 'Mean(R)' column from filtered_r_df
+rt_instantaneous <- filtered_r_df$`Mean(R)`
 
 # f: Generation time distribution
 # Read the generation_times.csv file
-generation_times_path <- "data/Andorra/simulation_outputs/generation_times.csv"
-f_distribution <- read_csv(file.path(epiabm_dir, "generation_times.csv"),
+f_distribution <- read_csv(file.path(epiestim_dir, "gen_time_dist.csv"),
+                           col_names = FALSE,
                            show_col_types = FALSE)
+print(head(f_distribution))
 
 # Call the function
 rt_case_values <- inst_to_case(
   rt_inst = rt_instantaneous,
   f = f_distribution,
-  t_start = 2,
+  t_start = 8,
   t_end = 60
 )
 
@@ -121,7 +142,7 @@ cat("\nCalculated rt_case values (first 10):")
 print(head(rt_case_values, 10))
 
 if (length(rt_case_values) > 0) {
-  case_times <- seq(from = t_start_val, length.out = length(rt_case_values))
+  case_times <- seq(8, length.out = length(rt_case_values))
   results_df <- data.frame(
     time = case_times,
     rt_case = rt_case_values
@@ -130,6 +151,7 @@ if (length(rt_case_values) > 0) {
   print(head(results_df))
 } else {
   cat("\nrt_case_values vector is empty. No results to show or save.")
+  results_df <- data.frame(time = numeric(0), rt_case = numeric(0))
 }
 
 # --- Part 4: Plotting R_t Curves ---
@@ -146,7 +168,7 @@ if (nrow(filtered_r_df) > 0 && nrow(results_df) > 0) {
     ) %>%
     dplyr::select(time, Rt_mean, Rt_lower, Rt_upper)
 
-  # Data for case R (converted from secondary_infections.csv)
+  # Data for case R (results_df is from Epiestim)
   plot_data_case <- results_df %>%
     dplyr::rename(Rt_mean = rt_case) %>%
     dplyr::select(time, Rt_mean)
@@ -158,6 +180,10 @@ if (nrow(filtered_r_df) > 0 && nrow(results_df) > 0) {
                        aes(x = time, y = Rt_mean,
                            color = "Mean Instantaneous R (EpiEstim)"),
                        linewidth = 1) +
+    ggplot2::geom_line(data = filtered_secondary_df,
+                       aes(x = time, y = R_t,
+                           color = "Epiabm case R_t"),
+                      linewidth = 1, linetype = "dotted") +
     ggplot2::geom_ribbon(data = plot_data_inst,
                          aes(x = time, ymin = Rt_lower, ymax = Rt_upper,
                              fill = "95% CI Instantaneous R"),
@@ -176,7 +202,8 @@ if (nrow(filtered_r_df) > 0 && nrow(results_df) > 0) {
     ) +
     ggplot2::scale_color_manual(
       values = c("Mean Instantaneous R (EpiEstim)" = "dodgerblue",
-                 "Case R (Converted)" = "firebrick")
+                 "Case R (Converted)" = "firebrick",
+                 "Epiabm case R_t" = "goldenrod")
     ) +
     ggplot2::scale_fill_manual(
       values = c("95% CI Instantaneous R" = "skyblue")
@@ -189,16 +216,17 @@ if (nrow(filtered_r_df) > 0 && nrow(results_df) > 0) {
 
   # Save the plot
   plot_filename <- "Rt_comparison_plot.png"
-  ggplot2::ggsave(plot_filename, plot = rt_plot, width = 10, height = 7,
+  ggplot2::ggsave(file.path(epiestim_dir, plot_filename),
+                  plot = rt_plot, width = 10, height = 7,
                   dpi = 300)
   print(paste("R_t comparison plot saved as", plot_filename))
 
 } else {
   cat("\nSkipping plotting: Not enough data. 'filtered_r_df' or 'results_df'
          is empty.")
-  if(nrow(filtered_r_df) == 0) print("Reason: filtered_r_df 
+  if (nrow(filtered_r_df) == 0) print("Reason: filtered_r_df 
                                       (from R_estimates_np)
                                       has no rows or relevant data.")
-  if(nrow(results_df) == 0) print("Reason: results_df 
+  if (nrow(results_df) == 0) print("Reason: results_df 
                                   (from rt_case calculation) has no rows.")
 }

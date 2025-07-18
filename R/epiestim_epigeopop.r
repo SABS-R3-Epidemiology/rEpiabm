@@ -1,12 +1,20 @@
 library(EpiEstim)
 library(ggplot2)
 
-output_dir <- "data/Andorra/simulation_outputs"
+input_dir <- "data/Andorra/simulation_outputs"
+output_dir <- "data/Andorra/simulation_outputs/epiestim"
+
+# Create output directory if it doesn't exist
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+  cat("Created output directory:", output_dir, "\n")
+}
 
 # Calculate count of Generation time distribution, std dev and mean
 create_gen_time_array <- function(file_path, display = TRUE, location) {
+
   # Read the CSV file and exclude the first row
-  data <- read.csv(file_path, header = TRUE)[-1, ]
+  data <- read.csv(file_path, header = TRUE)
 
   # Convert the data to a 1D array
   data_1d <- as.numeric(unlist(data))
@@ -31,14 +39,13 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
   max_value <- max(gen_time_dist$value)
   all_values <- 0:max_value
 
-  # Initialize a probability array with zeros for missing values
+  # Initialise a probability array with zeros for missing values
   prob_array <- numeric(length(all_values))
 
   # Fill in probabilities for values that exist
-  for (i in 1:nrow(gen_time_dist)) {
+  for (i in seq_len(nrow(gen_time_dist))) {
     value <- gen_time_dist$value[i]
-    prob_array[value + 1] <- gen_time_dist$probability[i] 
-    # +1 as R index starts at 1
+    prob_array[value] <- gen_time_dist$probability[i]
   }
 
   # Calculate mean and standard deviation
@@ -50,20 +57,25 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
     cat("\nMean Generation Time:", mean_gen_time, "\n")
     cat("Standard Deviation:", sd_gen_time, "\n")
 
-    library(ggplot2)
-
     p <- ggplot(gen_time_dist, aes(x = value, y = probability)) +
-        geom_bar(stat = "identity", fill = "steelblue") +
-        labs(title = "Generation Time Distribution",
-            x = "Value",
-            y = "Probability") +
-        theme_minimal()
+      geom_bar(stat = "identity", fill = "steelblue") +
+      labs(title = "Generation Time Distribution", x = "Value",
+           y = "Probability") + theme_minimal()
 
     # Save the plot
-    ggsave(file.path(output_dir, "Generation_plot.png"), plot = p,
-          width = 8, height = 6, dpi = 300)
+    ggsave(file.path(output_dir, "Generation_plot.png"), plot = p, width = 8,
+           height = 6, dpi = 300)
 
     cat("Generation plot saved\n")
+  }
+
+  # Save to file if location is provided, otherwise prompt
+  if (!missing(location)) {
+    write.table(prob_array, location, row.names = FALSE,
+                col.names = FALSE, quote = FALSE)
+    cat("Generation time distribution saved to:", location, "\n")
+  } else {
+    cat("No location for output given; please amend preprocess_epiestim.r\n")
   }
 
   return(list(
@@ -73,47 +85,31 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
   ))
 }
 
-# Calculate incidence, based on changes in Susceptible
-calculate_susceptible_differences <- function(file_path, output_dir = ".",
-                                              display = TRUE) {
+# Calculate incidence, based on 'Exposed', not 'Infected'
+calculate_susceptible_diff <- function(file_path, display = TRUE,
+                                       location) {
   # Read the CSV file
   data <- read.csv(file_path, header = TRUE)
 
-  # Group by time and sum the Susceptible column
-  library(dplyr)
-
-  # Aggregate data by time, summing the Susceptible column
-  grouped_data <- data %>%
-    group_by(time) %>%
-    summarize(susceptible = sum(InfectionStatus.Susceptible)) %>%
-    arrange(time)
-
-  # Extract the susceptible column from grouped data
-  susceptible <- grouped_data$susceptible
+  # Extract the Susceptible column
+  susceptible <- data$InfectionStatus.Susceptible
 
   # Calculate consecutive differences (day-to-day changes)
-  # Negative values indicate decreases in susceptible pop (new infections)
+  # Negative values mean decrease in susceptible population (new infections)
   differences <- diff(susceptible)
 
-  # Convert differences to positive values (for incidence)
-  # Take negative of diff because decreases in susceptible = new infections
+  # Swap sign of differences, new infections are now positive
+  # Set negative values to zero
   incidence <- -differences
-
-  # Only keep positive values (representing new infections)
   incidence[incidence < 0] <- 0
-
-  # Create time series for incidence (using the time column from grouped data)
-  time_points <- grouped_data$time[-1]  # Remove 1st time pt as we have n-1 diff
 
   # Display results if requested
   if (display) {
     cat("\nTotal new infections detected:", sum(incidence), "\n")
 
-    library(ggplot2)
-
     # Create a data frame for plotting
     plot_data <- data.frame(
-      time = time_points,
+      time = data$time[-1],  # Remove first time point as n-1 differences
       incidence = incidence
     )
 
@@ -125,14 +121,22 @@ calculate_susceptible_differences <- function(file_path, output_dir = ".",
       theme_minimal()
 
     # Save the plot
-    ggsave(file.path(output_dir, "Incidence_plot.png"), plot = p, width = 8, 
-      height = 6, dpi = 300)
+    ggsave(file.path(output_dir, "Incidence_plot.png"), plot = p, width = 8,
+           height = 6, dpi = 300)
 
     cat("Incidence plot saved\n")
   }
 
+  # Save to file if location is provided
+  if (!missing(location)) {
+    write.table(incidence, location, row.names = FALSE, col.names = FALSE,
+                quote = FALSE)
+    cat("Incidence data saved to:", location, "\n")
+  } else {
+    cat("No location for output given; please specify output location\n")
+  }
+
   return(list(
-    time = time_points,
     incidence = incidence,
     total_incidence = sum(incidence)
   ))
@@ -142,7 +146,6 @@ calculate_susceptible_differences <- function(file_path, output_dir = ".",
 prepare_epiestim_data <- function(incidence_data, si_data, output_file) {
   # Create an incidence dataframe in the format EpiEstim expects
   incidence_df <- data.frame(
-    dates = incidence_data$time,  # Dates/times
     I = incidence_data$incidence  # Incidence values
   )
 
@@ -159,7 +162,7 @@ prepare_epiestim_data <- function(incidence_data, si_data, output_file) {
 
   # Save the data to an RDS file to be directly loaded by EpiEstim
   saveRDS(output_data, file = output_file)
-  cat("EpiEstim data saved to:", output_file, "\n")
+  cat("\nEpiEstim data saved to:", output_file, "\n")
 
   # Also save a text summary for reference
   sink(paste0(output_file, "_summary.txt"))
@@ -174,30 +177,26 @@ prepare_epiestim_data <- function(incidence_data, si_data, output_file) {
   return(output_data)
 }
 
-# Main execution
+# MAIN EXECUTION
 
-# Get incidence data
-incidence_data <- calculate_susceptible_differences(
-  file.path(output_dir, "output.csv"), 
-  display = TRUE
+# Calculate incidence from changes in susceptible population
+incidence_data <- calculate_susceptible_diff(
+  file.path(input_dir, "output.csv"),
+  display = TRUE, location <- file.path(output_dir, "incidence.csv")
 )
 
-# Get generation time distribution data
+# Generate Generation_time distribution array and values
 si_data <- create_gen_time_array(
-  file.path(output_dir, "generation_times.csv"), 
-  display = TRUE
+  file.path(input_dir, "generation_times.csv"),
+  display = TRUE, location <- file.path(output_dir, "gen_time_dist.csv")
 )
 
 # Combine and save data for EpiEstim
 epiestim_data <- prepare_epiestim_data(
-  incidence_data, 
-  si_data, 
+  incidence_data,
+  si_data,
   file.path(output_dir, "epiestim_data.rds")
 )
-
-
-# Load the saved data
-epiestim_data <- readRDS("data/Andorra/simulation_outputs/epiestim_data.rds")
 
 # Run EpiEstim
 res_parametric_si <- estimate_R(
@@ -215,32 +214,20 @@ res_parametric_si <- estimate_R(
 cat("\n\n===== SUMMARY OF EPIESTIM RESULTS =====\n\n")
 print(summary(res_parametric_si))
 
-# Print the first few rows of R estimates
-cat("\n\n===== FIRST ROWS OF R ESTIMATES =====\n\n")
-print(head(res_parametric_si$R))
-
 # Save the R estimates to a CSV file
-r_estimates_file <- "data/Andorra/simulation_outputs/R_estimates.csv"
+r_estimates_file <- file.path(output_dir, "R_estimates.csv")
 write.csv(res_parametric_si$R, r_estimates_file)
 cat("\nR estimates saved to:", r_estimates_file, "\n")
 
-# Save plots to files
-pdf_file <- "data/Andorra/simulation_outputs/epiestim_plot.pdf"
-pdf(pdf_file)
-plot(res_parametric_si)
-dev.off()
-cat("\nPlot saved to:", pdf_file, "\n")
-
-# Create and save a more detailed ggplot
-png_file <- "data/Andorra/simulation_outputs/epiestim_detailed_plot.png"
-library(ggplot2)
+# Create and save plots
+png_file <- file.path(output_dir, "epiestim_detailed_plot.png")
 
 p <- ggplot(res_parametric_si$R) + 
-  geom_ribbon(aes(x = t_start, 
+  geom_ribbon(aes(x = t_end, 
                  ymin = `Quantile.0.025(R)`, 
                  ymax = `Quantile.0.975(R)`), 
              fill = "lightblue", alpha = 0.5) +
-  geom_line(aes(x = t_start, y = `Median(R)`), color = "blue") +
+  geom_line(aes(x = t_end, y = `Median(R)`), color = "blue") +
   geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
   labs(title = "Reproduction Number Estimates Over Time",
        x = "Time Period", 
@@ -267,35 +254,23 @@ res_non_parametric_si <- estimate_R(
 cat("\n\n===== SUMMARY OF EPIESTIM RESULTS =====\n\n")
 print(summary(res_non_parametric_si))
 
-# Print the first few rows of R estimates
-cat("\n\n===== FIRST ROWS OF R ESTIMATES =====\n\n")
-print(head(res_non_parametric_si$R))
-
 # Save the R estimates to a CSV file
-r_estimates_file_np <- "data/Andorra/simulation_outputs/R_estimates_np.csv"
+r_estimates_file_np <- file.path(output_dir, "R_estimates_np.csv")
 write.csv(res_non_parametric_si$R, r_estimates_file_np)
 cat("\nR estimates saved to:", r_estimates_file_np, "\n")
 
-# Save plots to files
-pdf_file_np <- "data/Andorra/simulation_outputs/epiestim_plot_np.pdf"
-pdf(pdf_file_np)
-plot(res_non_parametric_si)
-dev.off()
-cat("\nPlot saved to:", pdf_file_np, "\n")
+# Create and save plot
+png_file_np <- file.path(output_dir, "epiestim_detailed_plot_np.png")
 
-# Create and save a more detailed ggplot
-png_file_np <- "data/Andorra/simulation_outputs/epiestim_detailed_plot_np.png"
-library(ggplot2)
-
-p <- ggplot(res_non_parametric_si$R) + 
-  geom_ribbon(aes(x = t_start, 
-                 ymin = `Quantile.0.025(R)`, 
-                 ymax = `Quantile.0.975(R)`), 
-             fill = "lightblue", alpha = 0.5) +
-  geom_line(aes(x = t_start, y = `Median(R)`), color = "blue") +
+p <- ggplot(res_non_parametric_si$R) +
+  geom_ribbon(aes(x = t_end,
+                  ymin = `Quantile.0.025(R)`,
+                  ymax = `Quantile.0.975(R)`),
+              fill = "lightblue", alpha = 0.5) +
+  geom_line(aes(x = t_end, y = `Median(R)`), color = "blue") +
   geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
   labs(title = "Reproduction Number Estimates Over Time",
-       x = "Time Period", 
+       x = "Time Period",
        y = "Estimated R") +
   theme_minimal()
 
