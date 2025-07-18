@@ -68,7 +68,7 @@ run_complete_simulation <- function(country="Andorra",
   df_long <- process_simulation_data(file.path(output_dir, output_file))
 
   print(colnames(df_long))
-  print(df_long)
+  
 
   # Generate SIR plot
   sir_plot <- create_sir_plot(df_long, display = TRUE)

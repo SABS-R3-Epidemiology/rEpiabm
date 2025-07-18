@@ -230,22 +230,44 @@ run_simulation <- function(pe, sim_params, file_params, inf_history_params, popu
   return(sim)
 }
 
-#' Process simulation CSV output
+#' Enhanced data processing function to ensure proper data types
 #'
 #' @param output_file Path to CSV output file
 #'
 #' @return A long-format data frame for plotting
 process_simulation_data <- function(output_file) {
-  df <- read.csv(here(output_file))
+  df <- read.csv(here(output_file), stringsAsFactors = FALSE)
+  
+  # Define status columns
   status_columns <- c("InfectionStatus.Susceptible", "InfectionStatus.InfectMild",
                       "InfectionStatus.Recovered", "InfectionStatus.Dead")
-  df_long <- pivot_longer(df, cols = all_of(status_columns), names_to = "Status", values_to = "Count")
-  df_long$Status <- factor(df_long$Status, levels = status_columns,
-                           labels = c("Susceptible", "Infected", "Recovered", "Dead"))
+  
+  # Ensure time column is numeric
+  if ("time" %in% colnames(df)) {
+    df$time <- as.numeric(df$time)
+  }
+  
+  # Convert status columns to numeric
+  df[status_columns] <- lapply(df[status_columns], function(x) as.numeric(as.character(x)))
+  
+  # Create long format
+  df_long <- pivot_longer(df, 
+                         cols = all_of(status_columns), 
+                         names_to = "Status", 
+                         values_to = "Count")
+  
+  # Clean up status labels
+  df_long$Status <- factor(df_long$Status, 
+                          levels = status_columns,
+                          labels = c("Susceptible", "Infected", "Recovered", "Dead"))
+  
+  # Remove any rows with missing values
+  df_long <- df_long[complete.cases(df_long), ]
+  
   return(df_long)
 }
 
-#' Create an SIR model plot
+#' Create an SIR model plot (Fixed version with aggregation)
 #'
 #' @param df_long Data frame from `process_simulation_data`
 #' @param title Title of the plot
@@ -253,12 +275,31 @@ process_simulation_data <- function(output_file) {
 #'
 #' @return A ggplot object
 create_sir_plot <- function(df_long, title = "SIR Model Flow", display = TRUE) {
+  # Ensure both time and Count are properly numeric
+  df_long$time <- as.numeric(as.character(df_long$time))
+  df_long$Count <- as.numeric(as.character(df_long$Count))
+  
+  # Remove any rows with NA values
+  df_long <- df_long[complete.cases(df_long), ]
+  
+  # **Add aggregation step using base R - group by time and Status, sum the counts**
+  df_long <- aggregate(Count ~ time + Status, data = df_long, FUN = sum, na.rm = TRUE)
+  
+  # Create the plot with explicit continuous scale for x-axis
   p <- ggplot(df_long, aes(x = time, y = Count, color = Status)) +
-    geom_line() +
-    scale_color_manual(values = c("Susceptible" = "blue", "Infected" = "red", "Recovered" = "green", "Dead" = "black")) +
+    geom_line(size = 1.2) +  # Removed the incorrect group = Count
+    scale_x_continuous(name = "Time") +  # Explicitly set continuous scale
+    scale_y_continuous(name = "Count") +
+    scale_color_manual(values = c("Susceptible" = "blue", 
+                                  "Infected" = "red", 
+                                  "Recovered" = "green", 
+                                  "Dead" = "black")) +
     theme_minimal() +
     labs(title = title, x = "Time", y = "Count") +
-    theme(legend.position = "right", plot.title = element_text(hjust = 0.5), panel.grid.minor = element_blank())
+    theme(legend.position = "right", 
+          plot.title = element_text(hjust = 0.5), 
+          panel.grid.minor = element_blank(),
+          legend.title = element_blank())  # Remove legend title for cleaner look
   
   if (display) print(p)
   return(p)
@@ -290,12 +331,12 @@ plot_rt_curves <- function(file_path, location) {
   data <- na.omit(data[, c("time", "R_t")])
   
   gg <- ggplot(data, aes(x = time, y = R_t)) +
-    geom_line(color = "blue", size = 1) +
+    geom_line(color = "blue", linewidth = 1) +
     labs(title = "Reproduction Number (R_t) Over Time", x = "Time", y = "R_t") +
     theme_minimal()
-  
-  print(gg)
+
   print("R_t plot generated successfully.")
+  print(gg)
   
   save_sir_plot(gg, location)
   return(gg)
