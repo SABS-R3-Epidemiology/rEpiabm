@@ -1,8 +1,8 @@
 library(EpiEstim)
 library(ggplot2)
 
-input_dir <- "data/Andorra/simulation_outputs"
-output_dir <- "data/Andorra/simulation_outputs/epiestim"
+input_dir <- "rEpiabm/data/Andorra/simulation_outputs"
+output_dir <- "rEpiabm/data/Andorra/simulation_outputs/epiestim"
 
 # Create output directory if it doesn't exist
 if (!dir.exists(output_dir)) {
@@ -48,6 +48,13 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
     prob_array[value] <- gen_time_dist$probability[i]
   }
 
+  # EpiEstim requires that the probability of a 0-day serial interval is 0.
+  # We set the first element (representing day 0) to 0 and re-normalise the rest.
+  if (length(prob_array) > 0 && prob_array[1] > 0) {
+    prob_array[1] <- 0
+    prob_array <- prob_array / sum(prob_array)
+  }
+  
   # Calculate mean and standard deviation
   mean_gen_time <- mean(data_1d)
   sd_gen_time <- sd(data_1d)
@@ -198,44 +205,44 @@ epiestim_data <- prepare_epiestim_data(
   file.path(output_dir, "epiestim_data.rds")
 )
 
-# Run EpiEstim
-res_parametric_si <- estimate_R(
-  incid = epiestim_data$incidence,
-  method = "parametric_si",
-  config = make_config(
-    list(
-      mean_si = epiestim_data$si_mean,
-      std_si = epiestim_data$si_sd
-    )
-  )
-)
+# # Run EpiEstim
+# res_parametric_si <- estimate_R(
+#   incid = epiestim_data$incidence,
+#   method = "parametric_si",
+#   config = make_config(
+#     list(
+#       mean_si = epiestim_data$si_mean,
+#       std_si = epiestim_data$si_sd
+#     )
+#   )
+# )
 
-# Print summary to console
-cat("\n\n===== SUMMARY OF EPIESTIM RESULTS =====\n\n")
-print(summary(res_parametric_si))
+# # Print summary to console
+# cat("\n\n===== SUMMARY OF EPIESTIM RESULTS =====\n\n")
+# print(summary(res_parametric_si))
 
-# Save the R estimates to a CSV file
-r_estimates_file <- file.path(output_dir, "R_estimates.csv")
-write.csv(res_parametric_si$R, r_estimates_file)
-cat("\nR estimates saved to:", r_estimates_file, "\n")
+# # Save the R estimates to a CSV file
+# r_estimates_file <- file.path(output_dir, "R_estimates.csv")
+# write.csv(res_parametric_si$R, r_estimates_file)
+# cat("\nR estimates saved to:", r_estimates_file, "\n")
 
-# Create and save plots
-png_file <- file.path(output_dir, "epiestim_detailed_plot.png")
+# # Create and save plots
+# png_file <- file.path(output_dir, "epiestim_detailed_plot.png")
 
-p <- ggplot(res_parametric_si$R) + 
-  geom_ribbon(aes(x = t_end, 
-                 ymin = `Quantile.0.025(R)`, 
-                 ymax = `Quantile.0.975(R)`), 
-             fill = "lightblue", alpha = 0.5) +
-  geom_line(aes(x = t_end, y = `Median(R)`), color = "blue") +
-  geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
-  labs(title = "Reproduction Number Estimates Over Time",
-       x = "Time Period", 
-       y = "Estimated R") +
-  theme_minimal()
+# p <- ggplot(res_parametric_si$R) + 
+#   geom_ribbon(aes(x = t_end, 
+#                  ymin = `Quantile.0.025(R)`, 
+#                  ymax = `Quantile.0.975(R)`), 
+#              fill = "lightblue", alpha = 0.5) +
+#   geom_line(aes(x = t_end, y = `Median(R)`), color = "blue") +
+#   geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
+#   labs(title = "Reproduction Number Estimates Over Time",
+#        x = "Time Period", 
+#        y = "Estimated R") +
+#   theme_minimal()
 
-ggsave(png_file, p, width = 10, height = 6)
-cat("\nDetailed plot saved to:", png_file, "\n")
+# ggsave(png_file, p, width = 10, height = 6)
+# cat("\nDetailed plot saved to:", png_file, "\n")
 
 #==============================================================
 

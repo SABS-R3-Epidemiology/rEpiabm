@@ -1,8 +1,8 @@
 library(EpiEstim)
 library(ggplot2)
 
-input_dir <- "data/toy/simulation_outputs"
-output_dir <- "data/toy/simulation_outputs/epiestim"
+input_dir <- "rEpiabm/data/toy/simulation_outputs"
+output_dir <- "rEpiabm/data/toy/simulation_outputs/epiestim"
 
 # Create output directory if it doesn't exist
 if (!dir.exists(output_dir)) {
