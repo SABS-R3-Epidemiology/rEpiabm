@@ -4,8 +4,8 @@ library(readr)
 library(ggplot2)
 library(zoo)
 
-epiestim_dir <- "rEpiabm/data/toy/simulation_outputs/epiestim"
-epiabm_dir <- "rEpiabm/data/toy/simulation_outputs"
+epiestim_dir <- "rEpiabm/data/Andorra/simulation_outputs/epiestim"
+epiabm_dir <- "rEpiabm/data/Andorra/simulation_outputs"
 
 # Read the R_estimates_np.csv file
 r_estimates_df <- read_csv(file.path(epiestim_dir, "R_estimates_np.csv"),

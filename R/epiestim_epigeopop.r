@@ -54,7 +54,7 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
     prob_array[1] <- 0
     prob_array <- prob_array / sum(prob_array)
   }
-  
+
   # Calculate mean and standard deviation
   mean_gen_time <- mean(data_1d)
   sd_gen_time <- sd(data_1d)
@@ -95,14 +95,23 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
 # Calculate incidence, based on 'Exposed', not 'Infected'
 calculate_susceptible_diff <- function(file_path, display = TRUE,
                                        location) {
-  # Read the CSV file
+  # Read the detailed CSV file
   data <- read.csv(file_path, header = TRUE)
 
-  # Extract the Susceptible column
-  susceptible <- data$InfectionStatus.Susceptible
+  # Aggregate the data to get total susceptibles per day
+  daily_data <- data %>%
+    group_by(time) %>%
+    summarise(Total.Susceptible = sum(InfectionStatus.Susceptible), .groups = 'drop')
+
+  # Print the aggregated data to the screen for verification
+  cat("\n--- Aggregated Daily Susceptible Counts ---\n")
+  print(head(daily_data))
+  cat("-----------------------------------------\n\n")
+  
+  # Extract the aggregated Susceptible column
+  susceptible <- daily_data$Total.Susceptible
 
   # Calculate consecutive differences (day-to-day changes)
-  # Negative values mean decrease in susceptible population (new infections)
   differences <- diff(susceptible)
 
   # Swap sign of differences, new infections are now positive
@@ -112,11 +121,11 @@ calculate_susceptible_diff <- function(file_path, display = TRUE,
 
   # Display results if requested
   if (display) {
-    cat("\nTotal new infections detected:", sum(incidence), "\n")
+    cat("Total new infections detected:", sum(incidence), "\n")
 
     # Create a data frame for plotting
     plot_data <- data.frame(
-      time = data$time[-1],  # Remove first time point as n-1 differences
+      time = daily_data$time[-1],  # Remove first time point as n-1 differences
       incidence = incidence
     )
 
@@ -148,6 +157,63 @@ calculate_susceptible_diff <- function(file_path, display = TRUE,
     total_incidence = sum(incidence)
   ))
 }
+
+# # Calculate incidence, based on 'Exposed', not 'Infected'
+# calculate_susceptible_diff <- function(file_path, display = TRUE,
+#                                        location) {
+#   # Read the CSV file
+#   data <- read.csv(file_path, header = TRUE)
+
+#   # Extract the Susceptible column
+#   susceptible <- data$InfectionStatus.Susceptible
+
+#   # Calculate consecutive differences (day-to-day changes)
+#   # Negative values mean decrease in susceptible population (new infections)
+#   differences <- diff(susceptible)
+
+#   # Swap sign of differences, new infections are now positive
+#   # Set negative values to zero
+#   incidence <- -differences
+#   incidence[incidence < 0] <- 0
+
+#   # Display results if requested
+#   if (display) {
+#     cat("\nTotal new infections detected:", sum(incidence), "\n")
+
+#     # Create a data frame for plotting
+#     plot_data <- data.frame(
+#       time = data$time[-1],  # Remove first time point as n-1 differences
+#       incidence = incidence
+#     )
+
+#     p <- ggplot(plot_data, aes(x = time, y = incidence)) +
+#       geom_bar(stat = "identity", fill = "firebrick") +
+#       labs(title = "Daily Incidence from Susceptible Population Changes",
+#            x = "Time",
+#            y = "New Infections") +
+#       theme_minimal()
+
+#     # Save the plot
+#     ggsave(file.path(output_dir, "Incidence_plot.png"), plot = p, width = 8,
+#            height = 6, dpi = 300)
+
+#     cat("Incidence plot saved\n")
+#   }
+
+#   # Save to file if location is provided
+#   if (!missing(location)) {
+#     write.table(incidence, location, row.names = FALSE, col.names = FALSE,
+#                 quote = FALSE)
+#     cat("Incidence data saved to:", location, "\n")
+#   } else {
+#     cat("No location for output given; please specify output location\n")
+#   }
+
+#   return(list(
+#     incidence = incidence,
+#     total_incidence = sum(incidence)
+#   ))
+# }
 
 # Function to combine and save incidence and SI data for EpiEstim
 prepare_epiestim_data <- function(incidence_data, si_data, output_file) {
