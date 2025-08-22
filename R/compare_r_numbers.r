@@ -4,17 +4,19 @@ library(readr)
 library(ggplot2)
 library(zoo)
 
-epiestim_dir <- "rEpiabm/data/Andorra/simulation_outputs/epiestim"
-epiabm_dir <- "rEpiabm/data/Andorra/simulation_outputs"
+epiestim_dir <- "data/Andorra/simulation_outputs/epiestim"
+epiabm_dir <- "data/Andorra/simulation_outputs"
+t_start <- 4
+t_end <- 60
 
-# Read the R_estimates_np.csv file
-r_estimates_df <- read_csv(file.path(epiestim_dir, "R_estimates_np.csv"),
+# Read the R_estimates.csv file
+r_estimates_df <- read_csv(file.path(epiestim_dir, "R_estimates.csv"),
                            show_col_types = FALSE)
 
-# Create a new column 't' corresponding to the range 8 to 60.
+# Create a new column 't' corresponding to the range 4 to 60.
 # The length of the sequence should match the number of rows in r_estimates_df
 num_rows_r_estimates <- nrow(r_estimates_df)
-t_values <- seq(from = 8, by = 1, length.out = num_rows_r_estimates)
+t_values <- seq(from = t_start, by = 1, length.out = num_rows_r_estimates)
 
 r_estimates_df$t <- t_values
 
@@ -35,7 +37,7 @@ secondary_infections_df <- read_csv(file.path(epiabm_dir,
 # Filter for "time" and "R_t" columns and filter time
 filtered_secondary_df <- secondary_infections_df %>%
   select(time, R_t) %>%
-  filter(time >= 8 & time <= 60)
+  filter(time >= t_start & time <= t_end)
 cat("\nFiltered secondary infections data:")
 print(head(filtered_secondary_df))
 print(paste("Number of rows in filtered_secondary_df:",
@@ -134,15 +136,15 @@ print(head(f_distribution))
 rt_case_values <- inst_to_case(
   rt_inst = rt_instantaneous,
   f = f_distribution,
-  t_start = 8,
-  t_end = 60
+  t_start = t_start,
+  t_end = t_end
 )
 
 cat("\nCalculated rt_case values (first 10):")
 print(head(rt_case_values, 10))
 
 if (length(rt_case_values) > 0) {
-  case_times <- seq(8, length.out = length(rt_case_values))
+  case_times <- seq(t_start, length.out = length(rt_case_values))
   results_df <- data.frame(
     time = case_times,
     rt_case = rt_case_values
@@ -158,7 +160,7 @@ if (length(rt_case_values) > 0) {
 cat("\nPreparing data for plotting R_t curves...")
 
 if (nrow(filtered_r_df) > 0 && nrow(results_df) > 0) {
-  # Data for instantaneous R (from R_estimates_np.csv)
+  # Data for instantaneous R (from R_estimates.csv)
   plot_data_inst <- filtered_r_df %>%
     dplyr::rename(
       time = t,

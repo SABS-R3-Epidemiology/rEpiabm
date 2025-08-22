@@ -1,8 +1,9 @@
 library(EpiEstim)
 library(ggplot2)
+library(dplyr)
 
-input_dir <- "rEpiabm/data/Andorra/simulation_outputs"
-output_dir <- "rEpiabm/data/Andorra/simulation_outputs/epiestim"
+input_dir <- "data/Andorra/simulation_outputs"
+output_dir <- "data/Andorra/simulation_outputs/epiestim"
 
 # Create output directory if it doesn't exist
 if (!dir.exists(output_dir)) {
@@ -158,63 +159,6 @@ calculate_susceptible_diff <- function(file_path, display = TRUE,
   ))
 }
 
-# # Calculate incidence, based on 'Exposed', not 'Infected'
-# calculate_susceptible_diff <- function(file_path, display = TRUE,
-#                                        location) {
-#   # Read the CSV file
-#   data <- read.csv(file_path, header = TRUE)
-
-#   # Extract the Susceptible column
-#   susceptible <- data$InfectionStatus.Susceptible
-
-#   # Calculate consecutive differences (day-to-day changes)
-#   # Negative values mean decrease in susceptible population (new infections)
-#   differences <- diff(susceptible)
-
-#   # Swap sign of differences, new infections are now positive
-#   # Set negative values to zero
-#   incidence <- -differences
-#   incidence[incidence < 0] <- 0
-
-#   # Display results if requested
-#   if (display) {
-#     cat("\nTotal new infections detected:", sum(incidence), "\n")
-
-#     # Create a data frame for plotting
-#     plot_data <- data.frame(
-#       time = data$time[-1],  # Remove first time point as n-1 differences
-#       incidence = incidence
-#     )
-
-#     p <- ggplot(plot_data, aes(x = time, y = incidence)) +
-#       geom_bar(stat = "identity", fill = "firebrick") +
-#       labs(title = "Daily Incidence from Susceptible Population Changes",
-#            x = "Time",
-#            y = "New Infections") +
-#       theme_minimal()
-
-#     # Save the plot
-#     ggsave(file.path(output_dir, "Incidence_plot.png"), plot = p, width = 8,
-#            height = 6, dpi = 300)
-
-#     cat("Incidence plot saved\n")
-#   }
-
-#   # Save to file if location is provided
-#   if (!missing(location)) {
-#     write.table(incidence, location, row.names = FALSE, col.names = FALSE,
-#                 quote = FALSE)
-#     cat("Incidence data saved to:", location, "\n")
-#   } else {
-#     cat("No location for output given; please specify output location\n")
-#   }
-
-#   return(list(
-#     incidence = incidence,
-#     total_incidence = sum(incidence)
-#   ))
-# }
-
 # Function to combine and save incidence and SI data for EpiEstim
 prepare_epiestim_data <- function(incidence_data, si_data, output_file) {
   # Create an incidence dataframe in the format EpiEstim expects
@@ -252,6 +196,7 @@ prepare_epiestim_data <- function(incidence_data, si_data, output_file) {
 
 # MAIN EXECUTION
 
+
 # Calculate incidence from changes in susceptible population
 incidence_data <- calculate_susceptible_diff(
   file.path(input_dir, "output.csv"),
@@ -271,54 +216,61 @@ epiestim_data <- prepare_epiestim_data(
   file.path(output_dir, "epiestim_data.rds")
 )
 
-# # Run EpiEstim
-# res_parametric_si <- estimate_R(
-#   incid = epiestim_data$incidence,
-#   method = "parametric_si",
-#   config = make_config(
-#     list(
-#       mean_si = epiestim_data$si_mean,
-#       std_si = epiestim_data$si_sd
-#     )
-#   )
-# )
+# Run EpiEstim
+t_start_p <- seq(2, 60 - 1)
+t_end_p <- t_start_p + 1
+res_parametric_si <- estimate_R(
+  incid = epiestim_data$incidence,
+  method = "parametric_si",
+  config = make_config(
+    list(
+      mean_si = epiestim_data$si_mean,
+      std_si = epiestim_data$si_sd,
+      t_start = t_start_p,
+      t_end = t_end_p
+    )
+  )
+)
 
-# # Print summary to console
-# cat("\n\n===== SUMMARY OF EPIESTIM RESULTS =====\n\n")
-# print(summary(res_parametric_si))
+# Print summary to console
+cat("\n\n===== SUMMARY OF EPIESTIM RESULTS =====\n\n")
+print(summary(res_parametric_si))
 
-# # Save the R estimates to a CSV file
-# r_estimates_file <- file.path(output_dir, "R_estimates.csv")
-# write.csv(res_parametric_si$R, r_estimates_file)
-# cat("\nR estimates saved to:", r_estimates_file, "\n")
+# Save the R estimates to a CSV file
+r_estimates_file <- file.path(output_dir, "R_estimates.csv")
+write.csv(res_parametric_si$R, r_estimates_file)
+cat("\nR estimates saved to:", r_estimates_file, "\n")
 
-# # Create and save plots
-# png_file <- file.path(output_dir, "epiestim_detailed_plot.png")
+# Create and save plots
+png_file <- file.path(output_dir, "epiestim_detailed_plot.png")
 
-# p <- ggplot(res_parametric_si$R) + 
-#   geom_ribbon(aes(x = t_end, 
-#                  ymin = `Quantile.0.025(R)`, 
-#                  ymax = `Quantile.0.975(R)`), 
-#              fill = "lightblue", alpha = 0.5) +
-#   geom_line(aes(x = t_end, y = `Median(R)`), color = "blue") +
-#   geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
-#   labs(title = "Reproduction Number Estimates Over Time",
-#        x = "Time Period", 
-#        y = "Estimated R") +
-#   theme_minimal()
+p <- ggplot(res_parametric_si$R) + 
+  geom_ribbon(aes(x = t_end, 
+                 ymin = `Quantile.0.025(R)`, 
+                 ymax = `Quantile.0.975(R)`), 
+             fill = "lightblue", alpha = 0.5) +
+  geom_line(aes(x = t_end, y = `Median(R)`), color = "blue") +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
+  labs(title = "Reproduction Number Estimates Over Time",
+       x = "Time Period", 
+       y = "Estimated R") +
+  theme_minimal()
 
-# ggsave(png_file, p, width = 10, height = 6)
-# cat("\nDetailed plot saved to:", png_file, "\n")
+ggsave(png_file, p, width = 10, height = 6)
+cat("\nDetailed plot saved to:", png_file, "\n")
 
-#==============================================================
 
 # With the SI distribution directly
+t_start_np <- seq(2, 60 - 1)
+t_end_np <- t_start_np + 1
 res_non_parametric_si <- estimate_R(
   incid = epiestim_data$incidence,
   method = "non_parametric_si",
   config = make_config(
     list(
-      si_distr = epiestim_data$si_distr
+      si_distr = epiestim_data$si_distr,
+      t_start = t_start_np,
+      t_end = t_end_np
     )
   )
 )

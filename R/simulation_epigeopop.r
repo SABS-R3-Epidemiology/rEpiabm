@@ -26,7 +26,7 @@ run_complete_simulation <- function(country="Andorra",
     simulation_seed = TRUE,
     initial_infected_number = as.integer(initial_infected),
     initial_infect_cell = FALSE,
-    include_waning = TRUE
+    include_waning = FALSE
   )
 
   file_params <- list(
