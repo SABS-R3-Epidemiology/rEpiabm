@@ -256,7 +256,7 @@ p <- ggplot(res_parametric_si$R) +
   geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
   labs(title = "Reproduction Number Estimates Over Time",
        x = "Time Period", 
-       y = "Estimated R") +
+       y = "Estimated R_t") +
   theme_minimal()
 
 ggsave(png_file, p, width = 10, height = 6)
@@ -299,7 +299,7 @@ p <- ggplot(res_non_parametric_si$R) +
   geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
   labs(title = "Reproduction Number Estimates Over Time",
        x = "Time Period",
-       y = "Estimated R") +
+       y = "Estimated R_t") +
   theme_minimal()
 
 ggsave(png_file_np, p, width = 10, height = 6)
