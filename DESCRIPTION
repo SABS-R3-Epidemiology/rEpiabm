@@ -15,6 +15,7 @@ Suggests: tinytest
 Imports: 
     ggplot2,
     here,
+    testthat,
     tidyr,
     pracma,
     reticulate (>= 1.14)

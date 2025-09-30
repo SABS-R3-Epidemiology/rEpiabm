@@ -1,13 +1,14 @@
 source("R/wrapper.R")
 # Example usage:
 # Run complete simulation
-run_complete_simulation <- function(country="Andorra",
+run_complete_simulation <- function(country = "Andorra",
                                     output_file = "output.csv",
                                     sir_plot_file = "SIR_plot.png",
                                     rt_plot_file = "Rt_plot.png",
                                     si_plot_file = "SerialInterval_plot.png",
                                     simulation_duration = 60,
-                                    initial_infected = 4) { 
+                                    initial_infected = 4) {
+
   output_dir <- paste0("data/", country, "/simulation_outputs")
 
   # Initialize environment
@@ -51,17 +52,17 @@ run_complete_simulation <- function(country="Andorra",
     generation_time_output = TRUE,
     serial_interval_output = TRUE
   )
-  
 
   # Use Andorra population data
-  population <- create_epigeopop_population(pe, 
-  paste0("data/", country, "/inputs/", country, 
-  "_microcells.csv"))
+  population <- create_epigeopop_population(pe,
+    paste0("data/", country, "/inputs/", country, "_microcells.csv")
+  )
 
   # Run simulation
-  sim <- run_geopop_sim(pe, sim_params, 
-  file_params, dem_file_params, population, 
-  inf_history_params, seed)
+  sim <- run_geopop_sim(pe, sim_params,
+    file_params, dem_file_params, population,
+    inf_history_params, seed
+  )
 
   # Process data
   df_long <- process_simulation_data(file.path(output_dir, output_file))
@@ -74,16 +75,19 @@ run_complete_simulation <- function(country="Andorra",
   save_sir_plot(sir_plot, file.path(output_dir, sir_plot_file))
 
   # Generate Rt plot
-  rt_plot <- plot_rt_curves(file.path(output_dir, "secondary_infections.csv"), 
-  location = file.path(output_dir, rt_plot_file))
+  rt_plot <- plot_rt_curves(file.path(output_dir, "secondary_infections.csv"),
+    location = file.path(output_dir, rt_plot_file)
+  )
 
   # Generate Serial Interval plot
-  si_plot <- create_serial_interval_plot(file.path(output_dir, 
-  "serial_intervals.csv"), display = TRUE, 
-  location = file.path(output_dir, si_plot_file))
-  
-  return(list(simulation = sim, data = df_long, 
-  sir_plot = sir_plot, rt_plot = rt_plot, si_plot = si_plot))
+  si_plot <- create_serial_interval_plot(file.path
+    (output_dir, "serial_intervals.csv"), display = TRUE,
+    location = file.path(output_dir, si_plot_file)
+  )
+
+  return(list(simulation = sim, data = df_long, sir_plot = sir_plot,
+              rt_plot = rt_plot, si_plot = si_plot)
+  )
 }
 
 results <- run_complete_simulation()
