@@ -17,6 +17,7 @@ Imports:
     here,
     testthat,
     tidyr,
+    readr,
     pracma,
     reticulate (>= 1.14)
 Depends: R (>= 3.3.0)
