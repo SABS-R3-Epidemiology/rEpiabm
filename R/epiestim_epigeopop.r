@@ -3,7 +3,10 @@ library(ggplot2)
 library(dplyr)
 
 input_dir <- "data/Andorra/simulation_outputs"
-output_dir <- "data/Andorra/simulation_outputs/epiestim"
+output_dir <- "data/Andorra/epiestim"
+first_day <- 2
+last_day <- 60
+sliding_window <- 7
 
 # Create output directory if it doesn't exist
 if (!dir.exists(output_dir)) {
@@ -217,8 +220,8 @@ epiestim_data <- prepare_epiestim_data(
 )
 
 # Run EpiEstim
-t_start_p <- seq(2, 60 - 1)
-t_end_p <- t_start_p + 1
+t_start_p <- seq(first_day, last_day - sliding_window)
+t_end_p <- t_start_p + sliding_window
 res_parametric_si <- estimate_R(
   incid = epiestim_data$incidence,
   method = "parametric_si",
@@ -261,8 +264,8 @@ cat("\nDetailed plot saved to:", png_file, "\n")
 
 
 # With the SI distribution directly
-t_start_np <- seq(2, 60 - 1)
-t_end_np <- t_start_np + 1
+t_start_np <- seq(first_day, last_day - sliding_window)
+t_end_np <- t_start_np + sliding_window
 res_non_parametric_si <- estimate_R(
   incid = epiestim_data$incidence,
   method = "non_parametric_si",
