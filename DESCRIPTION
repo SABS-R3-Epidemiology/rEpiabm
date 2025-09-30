@@ -18,6 +18,7 @@ Imports:
     testthat,
     tidyr,
     readr,
+    zoo,
     pracma,
     reticulate (>= 1.14)
 Depends: R (>= 3.3.0)
