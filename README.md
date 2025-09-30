@@ -1,3 +1,4 @@
+[![codecov](https://codecov.io/gh/SABS-R3-Epidemiology/rEpiabm/graph/badge.svg?token=YXS3D0IDBV)](https://codecov.io/gh/SABS-R3-Epidemiology/rEpiabm)
 ADD BADGES
 # rEpiabm
 rEpiabm enables users familiar with R to use [Epiabm](https://github.com/SABS-R3-Epidemiology/epiabm). Epiabm is a simulation tool that models the progress of an epidemic across a specified region of interest within a specific timeframe. It has been developed in python (PyEpiabm) for small-scale implementations and C++ (cEpiabm) for fast, large-scale simulations. PyEpiabm has a modular design, with many options to configure specific requirements.
