@@ -6,17 +6,22 @@ library(ggplot2)
 #' Initialise the Python simulation environment
 #'
 #' @return The `pyEpiabm` Python module
-initialize_simulation_env <- function() {
-  source("R/zzz.R")
-  initialize_python_env()
-  check_python_env()
-  
-  os <- import("os", delay_load = TRUE)
-  logging <- import("logging", delay_load = TRUE)
-  pd <- import("pandas", delay_load = TRUE)
-  plt <- import("matplotlib.pyplot", delay_load = TRUE)
-  pe <- import("pyEpiabm", delay_load = TRUE)
-  return(pe)
+initialize_simulation_env <- function(
+  source_fn = base::source,
+  import_fn = reticulate::import,
+  init_fn   = initialize_python_env,
+  check_fn  = check_python_env
+) {
+  source_fn("R/zzz.R")
+  init_fn(force=FALSE)
+  check_fn()
+
+  import_fn("os", delay_load = TRUE)
+  import_fn("logging", delay_load = TRUE)
+  import_fn("pandas", delay_load = TRUE)
+  import_fn("matplotlib.pyplot", delay_load = TRUE)
+  pe <- import_fn("pyEpiabm", delay_load = TRUE)
+  pe
 }
 
 #' Configure simulation parameters
@@ -312,7 +317,7 @@ create_sir_plot <- function(df_long, title = "SIR Model Flow", display = TRUE) {
 #' @param width Plot width in inches
 #' @param height Plot height in inches
 #' @param dpi Dots per inch for resolution
-save_sir_plot <- function(plot, filename, width = 10, height = 6, dpi = 300) {
+save_plot <- function(plot, filename, width = 10, height = 6, dpi = 300) {
   ggsave(filename = here(filename), plot = plot, width = width, height = height, dpi = dpi)
 }
 
@@ -325,20 +330,26 @@ save_sir_plot <- function(plot, filename, width = 10, height = 6, dpi = 300) {
 plot_rt_curves <- function(file_path, location) {
   if (!file.exists(file_path)) stop("The file does not exist. Please provide a valid file path.")
   
-  data <- tryCatch(read.csv(file_path), error = function(e) stop("Error reading the file. Ensure it's a valid CSV."))
+  # Read CSV with basic optimization
+  data <- tryCatch({
+    read.csv(file_path, stringsAsFactors = FALSE)
+  }, error = function(e) stop("Error reading the file. Ensure it's a valid CSV."))
+  
   if (!all(c("time", "R_t") %in% colnames(data))) stop("The CSV file must contain 'time' and 'R_t' columns.")
   
-  data <- na.omit(data[, c("time", "R_t")])
+  # More efficient NA removal - subset first, then remove NAs
+  data <- data[, c("time", "R_t")]
+  data <- data[complete.cases(data), ]
   
   gg <- ggplot(data, aes(x = time, y = R_t)) +
     geom_line(color = "blue", linewidth = 1) +
     labs(title = "Reproduction Number (R_t) Over Time", x = "Time", y = "R_t") +
     theme_minimal()
-
+  
   print("R_t plot generated successfully.")
   print(gg)
   
-  save_sir_plot(gg, location)
+  save_plot(gg, location)
   return(gg)
 }
 
@@ -361,6 +372,6 @@ create_serial_interval_plot <- function(file_path, title = "Serial Interval Dist
     theme(plot.title = element_text(hjust = 0.5), panel.grid.minor = element_blank())
   
   if (display) print(p)
-  save_sir_plot(p, location)
+  save_plot(p, location)
   return(p)
 }
