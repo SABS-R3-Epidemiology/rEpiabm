@@ -4,6 +4,8 @@ library(readr)
 library(ggplot2)
 library(zoo)
 
+source("R/epiestim_epigeopop.r")
+
 epiestim_dir <- "data/Andorra/epiestim"
 epiabm_dir <- "data/Andorra/simulation_outputs"
 # first_day is the end day of the first sliding window 

@@ -2,6 +2,8 @@ library(EpiEstim)
 library(ggplot2)
 library(dplyr)
 
+source("R/simulation_epigeopop.r")
+
 input_dir <- "data/Andorra/simulation_outputs"
 output_dir <- "data/Andorra/epiestim"
 first_day <- 2
