@@ -1,8 +1,10 @@
 library(EpiEstim)
 library(ggplot2)
 
+source("R/simulation_toy.r")
+
 input_dir <- "data/toy/simulation_outputs"
-output_dir <- "data/toy/simulation_outputs/epiestim"
+output_dir <- "data/toy/epiestim"
 
 # Create output directory if it doesn't exist
 if (!dir.exists(output_dir)) {
@@ -48,6 +50,13 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
     prob_array[value] <- gen_time_dist$probability[i]
   }
 
+  # EpiEstim requires that the probability of a 0-day serial interval is 0.
+  # We set the first element (representing day 0) to 0 and re-normalise the rest.
+  if (length(prob_array) > 0 && prob_array[1] > 0) {
+    prob_array[1] <- 0
+    prob_array <- prob_array / sum(prob_array)
+  }
+
   # Calculate mean and standard deviation
   mean_gen_time <- mean(data_1d)
   sd_gen_time <- sd(data_1d)
@@ -75,7 +84,7 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
                 col.names = FALSE, quote = FALSE)
     cat("Generation time distribution saved to:", location, "\n")
   } else {
-    cat("No location for output given; please amend preprocess_epiestim.r\n")
+    cat("No location for output given\n")
   }
 
   return(list(

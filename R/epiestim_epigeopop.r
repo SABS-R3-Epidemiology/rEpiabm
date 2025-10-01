@@ -88,7 +88,7 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
                 col.names = FALSE, quote = FALSE)
     cat("Generation time distribution saved to:", location, "\n")
   } else {
-    cat("No location for output given; please amend preprocess_epiestim.r\n")
+    cat("No location for output given\n")
   }
 
   return(list(
