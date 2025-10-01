@@ -25,7 +25,7 @@ create_gen_time_array <- function(file_path, display = TRUE, location) {
   # Convert the data to a 1D array
   data_1d <- as.numeric(unlist(data))
 
-  # Remove NaNs/NAs
+  # Remove NaNs
   data_1d <- data_1d[!is.na(data_1d)]
 
   # Create a frequency table of values
