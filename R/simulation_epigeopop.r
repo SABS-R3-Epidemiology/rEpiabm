@@ -72,7 +72,7 @@ run_complete_simulation <- function(country="Andorra",
 
   # Generate SIR plot
   sir_plot <- create_sir_plot(df_long, display = TRUE)
-  save_sir_plot(sir_plot, file.path(output_dir, sir_plot_file))
+  save_plot(sir_plot, file.path(output_dir, sir_plot_file))
 
   # Generate Rt plot
   rt_plot <- plot_rt_curves(file.path(output_dir, "secondary_infections.csv"), 

@@ -318,7 +318,7 @@ create_sir_plot <- function(df_long, title = "SIR Model Flow", display = TRUE) {
 #' @param height Plot height in inches
 #' @param dpi Dots per inch for resolution
 save_plot <- function(plot, filename, width = 10, height = 6, dpi = 300) {
-  ggsave(filename = here(filename), plot = plot, width = width, height = height, dpi = dpi)
+  ggsave(filename = here(filename), plot = plot, width = width, height = height, dpi = dpi, )
 }
 
 #' Plot the R_t curve from CSV
@@ -327,30 +327,46 @@ save_plot <- function(plot, filename, width = 10, height = 6, dpi = 300) {
 #' @param location Save path for output plot
 #'
 #' @return A ggplot object for the R_t curve
-plot_rt_curves <- function(file_path, location) {
-  if (!file.exists(file_path)) stop("The file does not exist. Please provide a valid file path.")
-  
-  # Read CSV with basic optimization
-  data <- tryCatch({
-    read.csv(file_path, stringsAsFactors = FALSE)
-  }, error = function(e) stop("Error reading the file. Ensure it's a valid CSV."))
-  
-  if (!all(c("time", "R_t") %in% colnames(data))) stop("The CSV file must contain 'time' and 'R_t' columns.")
-  
-  # More efficient NA removal - subset first, then remove NAs
-  data <- data[, c("time", "R_t")]
-  data <- data[complete.cases(data), ]
-  
-  gg <- ggplot(data, aes(x = time, y = R_t)) +
-    geom_line(color = "blue", linewidth = 1) +
-    labs(title = "Reproduction Number (R_t) Over Time", x = "Time", y = "R_t") +
+plot_rt_curves <- function(file_path, location, max_points = 5000L) {
+  stopifnot(file.exists(file_path))
+
+  # 1) Read just the columns we need using base R
+  #    (read header once to build a colClasses vector)
+  hdr <- read.csv(file_path, nrows = 1, check.names = FALSE)
+  cols <- names(hdr)
+  if (!all(c("time", "R_t") %in% cols)) {
+    stop("The CSV file must contain 'time' and 'R_t' columns (exact names).")
+  }
+  cc <- ifelse(cols %in% c("time", "R_t"), "numeric", "NULL")
+
+  df <- read.csv(
+    file_path,
+    colClasses = cc,
+    check.names = FALSE
+  )
+  # keep only finite, ordered rows
+  df <- df[is.finite(df$time) & is.finite(df$R_t), , drop = FALSE]
+  df <- df[order(df$time), , drop = FALSE]
+
+  # 2) Optional light downsampling for huge files (native base R)
+  n <- nrow(df)
+  if (n > max_points) {
+    idx <- unique(round(seq(1, n, length.out = max_points)))
+    df <- df[idx, , drop = FALSE]
+  }
+
+  # 3) Plot with subscripted label and save as PNG
+  gg <- ggplot(df, aes(x = time, y = R_t)) +
+    geom_line(linewidth = 0.8) +
+    labs(
+      title = "Reproduction Number (R_t) Over Time",
+      x = "Time",
+      y = expression(R[t])   # <-- subscript t
+    ) +
     theme_minimal()
-  
-  print("R_t plot generated successfully.")
-  print(gg)
-  
-  save_plot(gg, location)
-  return(gg)
+
+  ggsave(filename = location, plot = gg, device = "png")
+  gg
 }
 
 #' Create a serial interval distribution plot

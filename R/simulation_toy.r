@@ -87,7 +87,7 @@ run_complete_simulation <- function(output_dir="data/toy/simulation_outputs",
 
   # Generate SIR plot
   sir_plot <- create_sir_plot(df_long, display = TRUE)
-  save_sir_plot(sir_plot, file.path(output_dir, sir_plot_file))
+  save_plot(sir_plot, file.path(output_dir, sir_plot_file))
 
 
   # Generate Rt plot
