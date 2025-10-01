@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        R: [ '4.1.0' ]
+        R: [ '4.3.1' ]
 
     steps:
 
@@ -33,6 +33,11 @@ jobs:
         with:
           r-version: ${{ matrix.R }}
           Ncpus: 2
+
+      - name: Extra packages
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: EpiEstim reticulate
           
       - name: Query dependencies
         run: |
