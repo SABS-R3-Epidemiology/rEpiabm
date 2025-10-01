@@ -18,7 +18,7 @@ Imports:
     testthat,
     tidyr,
     readr,
-    epiestim
+    EpiEstim (>= 2.2-3),
     zoo,
     pracma,
     reticulate (>= 1.14)
