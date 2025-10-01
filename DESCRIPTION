@@ -21,6 +21,7 @@ Imports:
     EpiEstim (>= 2.2-3),
     zoo,
     pracma,
+    mockery,
     reticulate (>= 1.14)
 Depends: R (>= 3.3.0)
 Config/reticulate:
