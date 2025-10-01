@@ -10,6 +10,13 @@ run_complete_simulation <- function(country = "Andorra",
                                     initial_infected = 4) {
 
   output_dir <- paste0("data/", country, "/simulation_outputs")
+  
+  # Create output directory if it doesn't exist
+  if (!dir.exists(output_dir)) {
+    dir.create(output_dir, recursive = TRUE)
+    cat("Created output directory:", output_dir, "\n")
+  }
+
 
   # Initialize environment
   pe <- initialize_simulation_env()
