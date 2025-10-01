@@ -18,6 +18,7 @@ Imports:
     testthat,
     tidyr,
     readr,
+    epiestim
     zoo,
     pracma,
     reticulate (>= 1.14)
