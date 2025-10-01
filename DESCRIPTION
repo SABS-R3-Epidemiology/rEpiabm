@@ -17,6 +17,10 @@ Imports:
     here,
     testthat,
     tidyr,
+    readr,
+    EpiEstim (>= 2.2-3),
+    zoo,
+    pracma,
     reticulate (>= 1.14)
 Depends: R (>= 3.3.0)
 Config/reticulate:

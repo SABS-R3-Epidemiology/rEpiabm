@@ -7,8 +7,16 @@ run_complete_simulation <- function(country = "Andorra",
                                     rt_plot_file = "Rt_plot.png",
                                     si_plot_file = "SerialInterval_plot.png",
                                     simulation_duration = 60,
-                                    initial_infected = 100) {
+                                    initial_infected = 4) {
+
   output_dir <- paste0("data/", country, "/simulation_outputs")
+  
+  # Create output directory if it doesn't exist
+  if (!dir.exists(output_dir)) {
+    dir.create(output_dir, recursive = TRUE)
+    cat("Created output directory:", output_dir, "\n")
+  }
+
 
   # Initialize environment
   pe <- initialize_simulation_env()
@@ -26,7 +34,7 @@ run_complete_simulation <- function(country = "Andorra",
     simulation_seed = TRUE,
     initial_infected_number = as.integer(initial_infected),
     initial_infect_cell = FALSE,
-    include_waning = TRUE
+    include_waning = FALSE
   )
 
   file_params <- list(

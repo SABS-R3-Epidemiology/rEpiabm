@@ -201,7 +201,7 @@ plot_rt_curves <- function(file_path, location) {
   print("R_t plot generated successfully.")
 
   # Save the plot
-  save_sir_plot(gg, "data/simulation_outputs/rt_curve.png")
+  save_sir_plot(gg, location)
 
   return(gg)
 }

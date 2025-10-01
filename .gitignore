@@ -12,6 +12,10 @@
 # User-specific files
 .Ruserdata
 
+# csv files except *_microcells.csv
+*.csv
+!*_microcells.csv
+
 # Example code in package build process
 *-Ex.R
 

@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        R: [ '4.1.0' ]
+        R: [ '4.3.1' ]
 
     steps:
       - name: Check Windows architecture
@@ -35,6 +35,11 @@ jobs:
           r-version: ${{ matrix.R }}
           Ncpus: 2
           r-arch: 'x64'
+      
+      - name: Extra packages
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: EpiEstim reticulate
 
       - name: Verify R architecture
         run: |
@@ -51,7 +56,7 @@ jobs:
         shell: Rscript {0}
         
       - name: Cache R packages
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         id: cache
         with:
           path: |

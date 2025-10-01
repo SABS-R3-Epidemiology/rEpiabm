@@ -34,7 +34,7 @@ run_complete_simulation <- function(output_dir="data/toy/simulation_outputs",
     simulation_seed = TRUE,
     initial_infected_number = as.integer(initial_infected),
     initial_infect_cell = TRUE,
-    include_waning = TRUE
+    include_waning = FALSE
   )
 
   file_params <- list(
