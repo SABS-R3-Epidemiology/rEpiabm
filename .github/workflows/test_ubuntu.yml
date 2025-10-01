@@ -1,6 +1,7 @@
 name: "Unit tests: Ubuntu"
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - '**'
@@ -33,6 +34,11 @@ jobs:
         with:
           r-version: ${{ matrix.R }}
           Ncpus: 2
+
+      - name: Extra packages
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: EpiEstim reticulate
           
       - name: Query dependencies
         run: |
