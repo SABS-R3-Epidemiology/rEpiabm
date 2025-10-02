@@ -25,7 +25,7 @@ The basic flow of a simulation is described below. More detailed, complex exampl
 
 
 ### Step 1: Set up rEpiabm
-Before running a simulation, rEpiabm needs to be installed with all dependencies mentioned in the DESCRIPTION file. Also, the input folder structure used by the R program file needs to be set up.
+Before running a simulation, rEpiabm needs to be installed with all dependencies mentioned in the DESCRIPTION file. The instructions below list the requirements when using RStudio but you will need to alter if using a different IDE. Also, the input folder structure used by the R program file needs to be set up.
 
 **Instructions:**
 1. Clone the Github rEpiabm repository
@@ -46,9 +46,9 @@ Before running a simulation, rEpiabm needs to be installed with all dependencies
 
     5.2 *A toy simulation*
 
-    Users can specify population parameter values (usually small quantities) to create the Population spatial structure*: Copy the example `toy` folder structure within the data folder and name it with your region of interest. Include the `.json` file as you will need to edit this later for your simulation.
+    Users can specify population parameter values (usually small quantities) to create the Population spatial structure*: Copy the example `toy` folder structure within the data folder. Include the `.json` file as you will may want edit this later for your simulation.
 
-You are now ready to generate or configure the population for your simulation. 
+If you want to use Andorra or Toy as your region of interest, you can skip step 2 as you don't need to extract the spatial structure, though you may want to amend some parameters.
 
 ### Step 2: Generate the population spatial structure
 As shown in Figure 1, the region of interest is broken into a spatial structure:
@@ -62,7 +62,7 @@ As shown in Figure 1, the region of interest is broken into a spatial structure:
 
 **2.1 Using EpiGeoPop**
 
-The structure is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiology/EpiGeoPop). The user states a region of interest, Oxford or UK for example, and the tool extracts information from [Natural Earth](https://www.naturalearthdata.com/) and [JRC](https://data.jrc.ec.europa.eu/csv), providing a csv file as output. This file contains one line per microcell for each cell, with the number of households, places and individuals to be used in the simulation (the quantity of individuals are extracted from Census data).
+The spatial architecture is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiology/EpiGeoPop). The user states a region of interest, Oxford or UK for example, and the tool extracts information from [Natural Earth](https://www.naturalearthdata.com/) and [JRC](https://data.jrc.ec.europa.eu/csv), providing a csv file as output. This file contains one line per microcell for each cell, with the number of households, places and individuals to be used in the simulation (the quantity of individuals are extracted from Census data).
 
 **Instructions:**
 
@@ -71,7 +71,7 @@ The structure is created using [EpiGeoPop](https://github.com/SABS-R3-Epidemiolo
 > [!NOTE]  
 > The .json file which you amend to put the name your country also needs the proportion of households with 1 individual, 2 individuals, 3 individuals... up to 10 individuals. This information is usually found using census data (or equivalent) for your region. Amend the .json file as described [in this Jupyter notebook](./walk_through/detailed_example.ipynb). 
 
-2. Copy the extracted file to the new folder `data/<your_country>/inputs`
+2. Copy the extracted file to your new folder `data/<your_country>/inputs`
 
 > [!CAUTION]  
 > At the time of writing, the tool did not extract the data successfully. Please follow the instructions [in this Jupyter notebook](./walk_through/epigeopop_example.ipynb).
@@ -90,7 +90,7 @@ The user defines population values to generate a toy population spatial structur
 
 **Instructions:**
 
-1. Open simulation.R and amend the following parameters (these are the default values):
+1. Open simulation_toy.r and amend the following parameters (these are the default values):
   ```
   population_size = as.integer(100),
   cell_number = as.integer(2),
@@ -99,7 +99,7 @@ The user defines population values to generate a toy population spatial structur
   place_number = as.integer(2)
   population_seed = as.integer(42)
   ```
-2. Save simulation.R
+2. Save simulation_toy.r
 
 > [!NOTE]  
 > Please see more detailed instructions [in this Jupyter notebook](./walk_through/toy_example.ipynb).
@@ -123,7 +123,7 @@ The following parameters are essential and need to be stated by the user to run 
 2. Amend the parameter array `household_size_distribution` to have your countries' distribution of households 
 > [!WARNING]  
 > Make sure these match the values used to extract your population data in Step 2. 
-3. Open `simulation_epigeopop.R` and amend:
+3. Open `simulation_epigeopop.r` and amend:
   * `input_dir`: the absolute path to your csv file exported from EpiGeoPop
   * `initial_infected`: enter the number of infected individuals at the start of the simulation.
   * `duration`: enter the time for the simulation to run (in days)
@@ -138,7 +138,7 @@ The following parameters are essential and need to be stated by the user to run 
 * Duration of the simulation (in days)
 
 **Instructions:**
-1. Open `simulation_toy.R` and amend:
+1. Open `simulation_toy.r` and amend:
   * `initial_infected`: enter the number of infected individuals at the start of the simulation.
   * `duration`: enter the time for the simulation to run (in days)
 
@@ -181,7 +181,7 @@ An overview of the program workflow is illustrated in Figure 4.
 </figure><br><br>
 
 **Instructions:**
-1. After saving the configured file, either `simulation_epigeopop.R` or `simulation_toy.R`, run this code!
+1. After saving the configured file, either `simulation_epigeopop.r` or `simulation_toy.r`, run this code!
 
 ### Step 5: Evaluate results
 A simulation produces one csv output file by default, found in the directory `data/<your_country>/simulation_outputs`. This file contains the number of individuals for each infection status (S, E, I<sub>mild</sub>, etc) for each day.
