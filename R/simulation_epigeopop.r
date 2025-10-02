@@ -6,7 +6,7 @@ run_complete_simulation <- function(country="Andorra",
                                     sir_plot_file = "SIR_plot.png",
                                     rt_plot_file = "Rt_plot.png",
                                     si_plot_file = "SerialInterval_plot.png",
-                                    simulation_duration = 10,
+                                    simulation_duration = 60,
                                     initial_infected = 100) { 
   output_dir <- paste0("data/", country, "/simulation_outputs")
 
