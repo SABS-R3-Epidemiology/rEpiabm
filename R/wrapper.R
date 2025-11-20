@@ -159,6 +159,16 @@ create_epigeopop_population <- function(pe, epigeopop_file) {
   return(pe$routine$FilePopulationFactory()$make_pop(epigeopop_file))
 }
 
+# --- Testable helpers (make stubbing easy in tests) ---
+.make_simulation <- function(pe) {
+  pe$routine$Simulation()
+}
+
+.set_sim_seed <- function(pe, seed) {
+  pe$routine$Simulation$set_random_seed(seed = as.integer(seed))
+}
+
+
 #' Run a full simulation
 #'
 #' @param pe The `pyEpiabm` module
@@ -173,10 +183,11 @@ create_epigeopop_population <- function(pe, epigeopop_file) {
 #'
 #' @return A `Simulation` object after running
 run_simulation <- function(pe, sim_params, file_params, inf_history_params, population,
-                          simulation_type = "toy", sweep_params = NULL, dem_file_params = NULL, seed = 42) {
-  
-  pe$routine$Simulation$set_random_seed(seed = as.integer(seed))
-  
+                           simulation_type = "toy", sweep_params = NULL, dem_file_params = NULL, seed = 42) {
+
+  # Use helper so tests can stub this cleanly
+  .set_sim_seed(pe, seed)
+
   if (simulation_type == "toy") {
     default_sweeps <- list(InitialDemographicsSweep = FALSE)
     if (!is.null(sweep_params)) {
@@ -194,7 +205,7 @@ run_simulation <- function(pe, sim_params, file_params, inf_history_params, popu
       InitialInfectedSweep(pe)
     )
 
-    if (default_sweeps$InitialDemographicsSweep) {
+    if (isTRUE(default_sweeps$InitialDemographicsSweep)) {
       if (is.null(dem_file_params)) {
         stop("dem_file_params is required when InitialDemographicsSweep = TRUE")
       }
@@ -206,7 +217,7 @@ run_simulation <- function(pe, sim_params, file_params, inf_history_params, popu
       QueueSweep(pe),
       HostProgressionSweep(pe)
     )
-    
+
   } else if (simulation_type == "epigeopop") {
     initial_sweeps <- list(
       InitialHouseholdSweep(pe),
@@ -223,17 +234,19 @@ run_simulation <- function(pe, sim_params, file_params, inf_history_params, popu
       QueueSweep(pe),
       HostProgressionSweep(pe)
     )
-    
+
   } else {
     stop("simulation_type must be either 'toy' or 'epigeopop'")
   }
 
-  sim <- pe$routine$Simulation()
+  # Use helper so tests can stub the constructor cleanly
+  sim <- .make_simulation(pe)
   sim$configure(population, initial_sweeps, daily_sweeps, sim_params, file_params, inf_history_params)
   sim$run_sweeps()
   sim$compress_csv()
   return(sim)
 }
+
 
 #' Enhanced data processing function to ensure proper data types
 #'
